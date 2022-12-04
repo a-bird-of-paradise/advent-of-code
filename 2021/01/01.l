@@ -32,6 +32,7 @@ bool first = true, second = false;
 
         previous_sum3 = current_sum3;
         current_sum3 = current + previous + pprevious; 
+        
         if(current > previous) increased++;
         if(current_sum3 > previous_sum3) increased_sum3++;
     }
