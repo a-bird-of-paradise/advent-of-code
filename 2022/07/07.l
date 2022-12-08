@@ -1,4 +1,4 @@
-%option noyywrap main 8bit yylineno
+%option noyywrap main 8bit align fast yylineno
 %{
 #include "funcs.h"
 #include <stdlib.h>

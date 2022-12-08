@@ -11,16 +11,16 @@ LIBS=
 CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 
-SOURCES=lex.yy.c funcs.c
+SOURCES=main.c
 OBJS=$(SOURCES:.c=.o)
 
 .PHONY: answer
 
-answer: 07 input.txt testinput.txt
-	./07 < testinput.txt
-	./07 < input.txt
+answer: 08 input.txt testinput.txt
+	./08 < testinput.txt
+	./08 < input.txt
 
-07: $(OBJS)
+08: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@
 
 %.o: %.c %.h
@@ -29,12 +29,12 @@ answer: 07 input.txt testinput.txt
 %.o: %.c 
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-lex.yy.c: 07.l
+lex.yy.c: 08.l
 	$(FLEX) $<
 
 .PHONY: clean
 
 clean:
-	rm -f lex.yy.c 07
+	rm -f lex.yy.c 08
 	rm -rf *.dSYM *.gcda *.gcno merge.out default.profraw
 	rm -f $(OBJS)
