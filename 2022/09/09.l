@@ -3,11 +3,9 @@
 %{
 #include <stdbool.h>
 typedef struct location { int x; int y; } LOC;
-LOC H, T, s;
+LOC H, T, s, train[10];
 typedef enum direction { UP, DOWN, LEFT, RIGHT } DIR;
 void move(const DIR d, const int times);
-
-LOC train[10];
 
 unsigned long hash(const LOC x);
 unsigned visited[1024 * 1024] = {0};
