@@ -13,7 +13,7 @@ unsigned visited2[1024 * 1024] = {0};
 void    init(void);
 static bool do_init = true;
 DIR     get_dir(const char d);
-int     dist(const LOC x, const LOC y);
+int     dist(const LOC x, const LOC y); //taxicab
 void    answer(unsigned *visits);
 %}
 
@@ -52,34 +52,22 @@ void drag_inner(LOC *head, LOC *tail, unsigned *update)
     if(tail->x == head->x && tail->y == head->y) {}
     // or same row
     else if(tail->y == head->y){
-        if(tail->x == head->x-2){
-            tail->x++;
-        }
-        else if(tail->x == head->x+2) {
-            tail->x--;
-        }
+        if(tail->x == head->x-2) tail->x++;
+        else if(tail->x == head->x+2) tail->x--;
     }
     // or same column
     else if(tail->x == head->x){
-        if(tail->y == head->y-2){
-            tail->y++;
-        }
-        else if(tail->y == head->y+2){
-            tail->y--;
-        }
+        if(tail->y == head->y-2) tail->y++;
+        else if(tail->y == head->y+2) tail->y--;
     }
     // or diagonal - move by quadrant only if at least 2 steps away
-    else if(head->x > tail->x && head->y > tail->y && dist(*head,*tail) > 2){
-        tail->x++;  tail->y++;
-    }
-    else if(head->x > tail->x && head->y < tail->y && dist(*head,*tail) > 2){
-        tail->x++;  tail->y--;
-    }
-    else if(head->x < tail->x && head->y > tail->y && dist(*head,*tail) > 2){
-        tail->x--;  tail->y++;
-    }
-    else if(head->x < tail->x && head->y < tail->y && dist(*head,*tail) > 2){
-        tail->x--;  tail->y--;
+    if(dist(*head,*tail)>2)
+    {
+        if(head->x > tail->x) tail->x++;
+        else if(head->x < tail->x) tail->x--;
+        
+        if(head->y > tail->y) tail->y++;
+        else if(head->y < tail->y) tail->y--;
     }
 
     if(update) update[hash(*tail)]++;
