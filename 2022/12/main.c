@@ -46,45 +46,25 @@ void free_all(void)
         to_visit_node = next_to_visit;
     }
 
-    if(startdistances) free(startdistances);
-}
-
-int cmpfunc(const void *a, const void *b)
-{
-   const unsigned *A = a, *B = b;
-   return (*A > *B) - (*A < *B);
 }
 
 int main(int argc, char *argv[])
 {
     read_stdin();
-    fill();
+    fill_reverse();
     walk(start);
     printf("%8u\n",end->distance);
 
-    printf("%8d\n",nstarts);
+    LISTITEM *current = starts.head;
+    unsigned answer = UINT16_MAX;
 
-    startdistances = malloc(nstarts * sizeof(unsigned));
-    int startcounter = 0;
-
-    LISTITEM *this_start = starts.head;
-
-    while(this_start)
+    for(int i = 0; i < nstarts; i++)
     {
-        reset_nodes();
-        walk(this_start->this_node);
-        startdistances[startcounter] = end->distance;
-        printf("%4d%8u\n",startcounter,startdistances[startcounter]);
-        startcounter++;
-        
-        this_start = this_start->next;
-        
-        //if(startdistances[startcounter] != UINT16_MAX) print_map_2();
+        answer = current->this_node->distance < answer ? current->this_node->distance : answer;
+        current = current->next;
     }
 
-    qsort(startdistances,nstarts,sizeof(unsigned),cmpfunc);
-
-    printf("%8u\n",startdistances[0]);
+    printf("%8u\n",answer);
 
     free_all();
 }

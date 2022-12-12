@@ -51,7 +51,7 @@ void walk(NODE *towalk)
 {
     towalk->distance=0;
     visit(towalk);
-    while(!end->visited)
+    while(to_visit.head)
     {
         LISTITEM *smallest, *current;
         unsigned mindistance = UINT16_MAX;
@@ -69,7 +69,6 @@ void walk(NODE *towalk)
             current = current->next;
         }
         if(!smallest) break;
-        if(smallest->this_node->distance == UINT16_MAX) break; // inaccessible
         visit(smallest->this_node);
     }
 }

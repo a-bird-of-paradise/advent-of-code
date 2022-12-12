@@ -8,4 +8,3 @@ extern NODE *start, *end;
 extern NODELIST to_visit, starts;
 
 extern int ncols, rowcounter, nstarts;
-extern unsigned *startdistances;
