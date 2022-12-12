@@ -11,7 +11,7 @@ LIBS=
 CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 
-SOURCES=main.c
+SOURCES=main.c globals.c funcs.c io.c
 OBJS=$(SOURCES:.c=.o)
 
 .PHONY: answer
