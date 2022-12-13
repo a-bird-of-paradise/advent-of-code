@@ -12,7 +12,7 @@ LIBS=
 CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 
-SOURCES=lex.yy.c 13.tab.c main.c structs.c
+SOURCES=lex.yy.c 13.tab.c main.c structs.c funcs.c
 OBJS=$(SOURCES:.c=.o)
 
 .PHONY: answer
