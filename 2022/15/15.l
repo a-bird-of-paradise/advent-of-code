@@ -157,7 +157,7 @@ long excluded(const long y, const long min, const long max, const long flag)
 
 void search(const long n)
 {
-    for(long i = 0; i<=n; i++){
+    for(long i = n; i>=0; i--){
         if(excluded(i,0,n,0) == n){
             long x = excluded(i,0,n,2);
             printf("%20ld%20ld%20ld\n",x,i,4000000*x+i);
