@@ -4,7 +4,7 @@
 
 BLUEPRINT blueprints[N_BLUEPRINTS] = {0};
 
-int pmax(int a, int b) { if(a>b) return a; else return b; }
+int pmax(int a, int b) { if(a>=b) return a; else return b; }
 
 void print_blueprint(const int i) {
     printf("%4d%4d%4d%4d%4d%4d%4d\n",
@@ -13,14 +13,14 @@ void print_blueprint(const int i) {
         blueprints[i].clay_robot_ore_cost,
         blueprints[i].obsidian_robot_ore_cost,
         blueprints[i].obsidian_robot_clay_cost,
-        blueprints[i].geode_robot_clay_cost,
+        blueprints[i].geode_robot_ore_cost,
         blueprints[i].geode_robot_obsidian_cost);
 }
 void print_inventory(CONTEXT ctx){
     printf("%4d%4d%4d%4d%4d\n",ctx.clay,ctx.ore,ctx.obsidian,ctx.geode,ctx.current_minute);
 }
 
-long max_geodes(CONTEXT inventory) 
+int max_geodes(CONTEXT inventory) 
 {
     //print_inventory(inventory);
     // stop condition
@@ -28,30 +28,31 @@ long max_geodes(CONTEXT inventory)
         return inventory.geode + inventory.geode_collecting_robots;
     }
 
-    static long max_geodes_seen;
-    if(inventory.current_minute == 1) max_geodes_seen = INT32_MIN;
+    static int max_geodes_seen;
+    if(inventory.current_minute == 1) max_geodes_seen = INT16_MIN;
 
     // prune hopeless paths
     int dt = inventory.max_minute - inventory.current_minute;
-    long best_case_max = 
+    int best_case_max = 
         inventory.geode // what we currently have
         + dt * (dt+1)/2 // how many more robots we could possibly produce
-        + dt * inventory.geode_collecting_robots; // current bot production;
+        + (dt+1) * inventory.geode_collecting_robots; // current bot production;
 
     if(best_case_max < max_geodes_seen) return inventory.geode;
 
-    long answer = INT32_MIN;
-    long temp = answer;
+    int answer = INT16_MIN;
+    int temp = answer;
 
     // pruning
     int orebot_max = 
         pmax(blueprints[inventory.blueprint_id].clay_robot_ore_cost,
             pmax(blueprints[inventory.blueprint_id].ore_robot_ore_cost,
-                blueprints[inventory.blueprint_id].obsidian_robot_ore_cost));
-    int claybot_max = 
-        pmax(blueprints[inventory.blueprint_id].obsidian_robot_clay_cost,
-            blueprints[inventory.blueprint_id].geode_robot_clay_cost);
+                pmax(blueprints[inventory.blueprint_id].obsidian_robot_ore_cost,
+                    blueprints[inventory.blueprint_id].geode_robot_ore_cost)));
+
+    int claybot_max = blueprints[inventory.blueprint_id].obsidian_robot_clay_cost;
     bool skip = false;
+    bool skip_other_bots = false;
 
     // make copies of inventory
     CONTEXT children[5];
@@ -62,11 +63,11 @@ long max_geodes(CONTEXT inventory)
 
     // decide whether to do nothing, or build one of the four robots, this minute
     // build geobot if poss
-    if(children[0].clay >= blueprints[children[0].blueprint_id].geode_robot_clay_cost
+    if(children[0].ore >= blueprints[children[0].blueprint_id].geode_robot_ore_cost
         && children[0].obsidian >= blueprints[children[0].blueprint_id].geode_robot_obsidian_cost)
         {
             // consume
-            children[0].clay -= blueprints[children[0].blueprint_id].geode_robot_clay_cost;
+            children[0].ore -= blueprints[children[0].blueprint_id].geode_robot_ore_cost;
             children[0].obsidian -= blueprints[children[0].blueprint_id].geode_robot_obsidian_cost;
             // harvest
             children[0].ore += children[0].ore_collecting_robots;
@@ -78,13 +79,13 @@ long max_geodes(CONTEXT inventory)
             //recurse
             temp = max_geodes(children[0]);
             skip = true;
+            skip_other_bots = true;
         }
     answer = answer < temp ? temp : answer;
 
     // build obsbot if poss
     if(children[1].clay >= blueprints[children[1].blueprint_id].obsidian_robot_clay_cost
-        && children[1].ore >= blueprints[children[1].blueprint_id].obsidian_robot_ore_cost
-        && !skip)
+        && children[1].ore >= blueprints[children[1].blueprint_id].obsidian_robot_ore_cost)
         {
             // consume
             children[1].clay -= blueprints[children[1].blueprint_id].obsidian_robot_clay_cost;
@@ -104,8 +105,7 @@ long max_geodes(CONTEXT inventory)
     // build claybot if poss
     // and worthwhile
     if(children[2].ore >= blueprints[children[2].blueprint_id].clay_robot_ore_cost 
-        && children[2].clay_collecting_robots < claybot_max
-        && !skip)
+        && children[2].clay_collecting_robots <= claybot_max)
         {
             // consume
             children[2].ore -= blueprints[children[2].blueprint_id].clay_robot_ore_cost;
@@ -124,8 +124,7 @@ long max_geodes(CONTEXT inventory)
     // build orebot if poss
     // but only if we aren't producing too many i.e. cannot consume any more
     if(children[3].ore >= blueprints[children[3].blueprint_id].ore_robot_ore_cost &&
-        children[3].ore_collecting_robots < orebot_max
-        && !skip)
+        children[3].ore_collecting_robots <= orebot_max)
         {
             // consume
             children[3].ore -= blueprints[children[3].blueprint_id].ore_robot_ore_cost;
@@ -172,20 +171,20 @@ int main(int argc, char **argv)
     initial.ore_collecting_robots=1;
     initial.max_minute = 24;
 
-    long answer = 0;
+    int answer = 0;
 
     if(true)
     for(int i = 0; i < N_BLUEPRINTS; i++)
     {
         if(!blueprints[i].id) break;
         initial.blueprint_id = i;
-        long temp = max_geodes(initial);
-        printf("%4d%8ld\n",i,temp);
+        int temp = max_geodes(initial);
+        printf("%4d%4d\n",i,temp);
         answer += (i+1)*temp;
     }
 
-    printf("%8ld\n",answer);
-
+    printf("%4d\n",answer);
+    print_inventory(initial);
     initial.max_minute = 32;
     answer = 1;
     if(true)
@@ -193,12 +192,12 @@ int main(int argc, char **argv)
     {
         if(!blueprints[i].id) break;
         initial.blueprint_id = i;
-        long temp = max_geodes(initial);
-        printf("%4d%8ld\n",i,temp);
+        int temp = max_geodes(initial);
+        printf("%4d%4d\n",i,temp);
         answer *= temp;
     }
 
-    printf("%8ld\n",answer);
+    printf("%4d\n",answer);
 
     return 0;
 }

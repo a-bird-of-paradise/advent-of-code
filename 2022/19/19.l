@@ -33,7 +33,7 @@ Each\ geode\ robot\ costs\ {INT}\ ore\ and\ {INT}   {
     blueprints[yy_blueprint].clay_robot_ore_cost = yy_clay_cost;
     blueprints[yy_blueprint].obsidian_robot_ore_cost = yy_obs_ore_cost;
     blueprints[yy_blueprint].obsidian_robot_clay_cost = yy_obs_clay_cost;
-    blueprints[yy_blueprint].geode_robot_clay_cost = yy_geode_ore_cost;
+    blueprints[yy_blueprint].geode_robot_ore_cost = yy_geode_ore_cost;
     blueprints[yy_blueprint].geode_robot_obsidian_cost = yy_geode_obs_cost;
 }
 
