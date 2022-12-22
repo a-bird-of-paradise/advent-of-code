@@ -111,12 +111,22 @@ void treefree(AST *a)
         case ':': treefree( ((SYMASGN *)a)->v); break;
 
         case 'N': 
-        case 'K': break;
-
+        case 'K': 
         default: break;
     }
     free(a);
     return;
+}
+
+
+long long symbol_value (char *s)
+{
+    SYMBOL *sym = lookup(s);
+    if(!sym->evaluated) {
+        sym->value = eval(sym->def);
+        sym->evaluated = true;
+    }
+    return sym->value;
 }
 
 long long eval (AST *a)
@@ -126,15 +136,7 @@ long long eval (AST *a)
 
     switch(a->nodetype) {
         case 'K':   v = ((NUMNODE *)a)->number; break;
-        case 'N':   
-        if(((SYMREF *)a)->s->evaluated) {
-            v = ((SYMREF *)a)->s->value;
-        } else {
-            v = eval(((SYMREF *)a)->s->def);
-            ((SYMREF *)a)->s->evaluated = true;
-            ((SYMREF *)a)->s->value  = v;
-        } 
-        break;
+        case 'N':   v = symbol_value( ((SYMREF *)a)->s->name); break; 
         case ':':   ((SYMASGN *)a)->s->def = ((SYMASGN *)a)->v; break;
         case '+':   v = eval(a->l) + eval(a->r); break;
         case '-':   v = eval(a->l) - eval(a->r); break;
@@ -146,81 +148,76 @@ long long eval (AST *a)
     return v;
 }
 
+void reset_symbols(void)
+{
+    for(int i = 0; i < N_HASH; i++)
+    {
+        if(symtab[i].evaluated){
+            symtab[i].evaluated = false;
+            symtab[i].value = 0;
+        }
+    }
+}
+
 long long part2()
 {
     SYMBOL *root = lookup("root");
     SYMBOL *humn = lookup("humn");
 
-    SYMBOL *this = humn, *next, *other;
+    bool found = false; 
 
-    char path[400][5] = {0};
-    int path_length = 0;
+    long long lower = 0, upper = 5000000000000, current;
+    long long lower_val, upper_val, current_val;
+    long long lower_diff, upper_diff, current_diff;
+    long long answer, orig;
 
-    while(this != root)
-    {
-        strcpy(path[path_length],this->name);
-        path_length++;
+    orig = humn->value;
 
-        for(int i = 0; i < N_HASH; i++)
-        {
-            next = &symtab[i];
-            if(next->name) {
-                if(next->l == this) {
-                    this = next;
-                    break;
-                } else if (next->r == this) {
-                    this = next;
-                    break;
-                }
-            } 
-        }
-    }
-        
-    strcpy(path[path_length],this->name);
+    while(!found) {
 
-    long long new_value, prev_value, operand;
+        current = (upper + lower) / 2;
 
-    this = lookup("root");
+        reset_symbols();
+        humn->evaluated = true; humn->value = lower; lower_val = symbol_value("root");
+        lower_diff = root->l->value - root->r->value;
+        reset_symbols();
+        humn->evaluated = true; humn->value = upper; upper_val = symbol_value("root");
+        upper_diff = root->l->value - root->r->value;
+        reset_symbols();
+        humn->evaluated = true; humn->value = current; current_val = symbol_value("root");
+        current_diff = root->l->value - root->r->value;
 
-    if(!strcmp(this->l->name, path[path_length-1])) {
-        prev_value = this->r->value; next = this->l; other = this->r;
-    } else {
-        prev_value = this->l->value; next = this->r; other = this->l;
-    }
-
-    printf("%s l:%s:%16lld r:%s:%16lld op:%c next:%s %16lld\n",
-        this->name, this->l->name, this->l->value,
-        this->r->name,this->r->value,this->def->nodetype,next->name, prev_value);
-
-    for (int i = path_length - 1; i > 0; i--) 
-    {
-
-        this = lookup(path[i]);
-
-        if(!strcmp(this->l->name, path[i-1])) {
-            next = this->l; other = this->r;
+        if((current_diff < 0 && lower_diff < 0)
+            || (current_diff > 0 && lower_diff > 0)) {
+            lower = current;
         } else {
-            next = this->r; other = this->l;
+            upper = current;
         }
 
-        // this node's value was produced from l and r via op 
-        // the other value is constant, so what value do we need to set 
-        // new value to be, to recover prev value? 
+        printf("%16lld%16lld%16lld%16lld\n",current,current_diff,lower_diff,upper_diff);
 
-        switch(this->def->nodetype){
-            case '+': new_value = prev_value - other->value; break;
-            case '-': new_value = prev_value + other->value; break;
-            case '*': new_value = prev_value / other->value; break;
-            case '/': new_value = prev_value * other->value; break;
-            default: printf("%c\n",this->def->nodetype);
-        }
-
-        printf("%s l:%s:%16lld r:%s:%16lld op:%c next:%s %16lld\n",
-            this->name, this->l->name, this->l->value,
-            this->r->name,this->r->value,this->def->nodetype,next->name, new_value);
-
-        prev_value = new_value;
+        if(current_diff == 0) found=true;
     }
 
-    return new_value;
+    answer =  humn->value;
+    current = answer;
+
+    printf("\nCandidate answers have 0 as the second column:\n");
+    
+    for(long long i = current - 3; i <= current + 3; i++)
+    {
+        reset_symbols();
+        humn->evaluated = true; 
+        humn->value = i; 
+        current_val = symbol_value("root");
+        current_diff = root->l->value - root->r->value;
+        printf("%16lld%16lld\n",i,current_diff);
+        if(current_diff == 0 && i < answer) answer = i;
+    }
+
+    reset_symbols(); 
+    humn->value = orig;
+    current_val = symbol_value("root");
+
+    return answer;
 }

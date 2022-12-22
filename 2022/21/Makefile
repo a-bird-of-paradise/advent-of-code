@@ -5,8 +5,8 @@ INCLUDE=-I/usr/local/opt/flex/include/ -I/usr/local/opt/llvm/include
 LDFLAGS=-L/usr/local/opt/llvm/lib -L/usr/local/opt/llvm/lib/c++ -Wl,-rpath,/usr/local/opt/llvm/lib/c++
 DBGFLAGS=-fsanitize=address -g -fsanitize=leak -fsanitize=undefined -fsanitize=integer
 FASTFLAGS=-Ofast -flto=full
-CXXFLAGS=$(DBGFLAGS) -std=c++2b
-CFLAGS=$(DBGFLAGS) -std=c99 -march=native
+CXXFLAGS=$(FASTFLAGS) -std=c++2b
+CFLAGS=$(FASTFLAGS) -std=c99 -march=native
 LIBS=
 
 CC=/usr/local/opt/llvm/bin/clang

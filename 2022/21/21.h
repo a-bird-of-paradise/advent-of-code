@@ -56,3 +56,5 @@ long long eval(AST *x);
 void treefree(AST *x);
 
 long long part2(void);
+
+long long symbol_value (char *s);

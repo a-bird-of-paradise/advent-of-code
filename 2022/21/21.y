@@ -30,7 +30,7 @@
 %%
 
 file:   list            {   
-    printf("%lld\n", eval(lookup("root")->def));
+    printf("%lld\n", symbol_value("root"));
     printf("%lld\n",part2());
     treefree($1);
 };
