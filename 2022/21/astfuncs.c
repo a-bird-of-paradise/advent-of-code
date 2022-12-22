@@ -166,7 +166,7 @@ long long part2()
 
     bool found = false; 
 
-    long long lower = 0, upper = 5000000000000, current;
+    long long lower = INT64_MIN/256, upper = INT64_MAX/256, current;
     long long lower_val, upper_val, current_val;
     long long lower_diff, upper_diff, current_diff;
     long long answer, orig;
@@ -194,7 +194,7 @@ long long part2()
             upper = current;
         }
 
-        printf("%16lld%16lld%16lld%16lld\n",current,current_diff,lower_diff,upper_diff);
+        printf("%20lld%20lld%20lld%20lld\n",current,current_diff,lower_diff,upper_diff);
 
         if(current_diff == 0) found=true;
     }
@@ -203,7 +203,7 @@ long long part2()
     current = answer;
 
     printf("\nCandidate answers have 0 as the second column:\n");
-    
+
     for(long long i = current - 3; i <= current + 3; i++)
     {
         reset_symbols();
@@ -211,7 +211,7 @@ long long part2()
         humn->value = i; 
         current_val = symbol_value("root");
         current_diff = root->l->value - root->r->value;
-        printf("%16lld%16lld\n",i,current_diff);
+        printf("%20lld%20lld\n",i,current_diff);
         if(current_diff == 0 && i < answer) answer = i;
     }
 
