@@ -24,7 +24,7 @@
 %left '*' '/'
 
 %type <a> stmt exp list
-%type <ll> file
+%type file
 %start file
 
 %%
