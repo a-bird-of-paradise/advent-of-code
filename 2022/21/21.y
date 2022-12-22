@@ -32,11 +32,11 @@
 file:   list            {   
     printf("%lld\n", eval(lookup("root")->def));
     printf("%lld\n",part2());
+    treefree($1);
 };
 
 list:   stmt            { $$ = newast('L',$1,NULL); }
-    |   list stmt       { $1->r = $2;  
-                            $$ = newast('L',$1,NULL); };
+    |   list stmt       { $1->r = $2;  $$ = newast('L',$1,NULL); };
 
 stmt: exp EOL           { $$ = $1;  };
 

@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include "21.tab.h"
 
-SYMBOL symtab[N_HASH];
+SYMBOL symtab[N_HASH] = {0};
 
 static unsigned symhash(char *sym)
 {
@@ -80,12 +80,42 @@ AST *newasgn(SYMBOL *s, AST *v)
     a->s = s;
     a->v = v;
     s->def=v;
+
+    // if v is arithmetic, note the left and right syms in the expression 
+
+    if(v){
+        switch(v->nodetype){
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                s->l = ((SYMREF *)(v->l))->s;
+                s->r = ((SYMREF *)(v->r))->s;
+            default: break;
+        }
+    }
+
     return (AST *)a;
 }
 
 void treefree(AST *a)
 {
-    // not now...
+    switch(a->nodetype) {
+        case '+': 
+        case '-': 
+        case '*': 
+        case '/': treefree(a->r); treefree(a->l); break;
+        
+        case 'L': if(a->r) treefree(a->r); if (a->l) treefree(a->l); break;
+
+        case ':': treefree( ((SYMASGN *)a)->v); break;
+
+        case 'N': 
+        case 'K': break;
+
+        default: break;
+    }
+    free(a);
     return;
 }
 
@@ -116,40 +146,81 @@ long long eval (AST *a)
     return v;
 }
 
-void reset_symbols(void)
-{
-    for(int i = 0; i < N_HASH; i++)
-    {
-        if(symtab[i].evaluated){
-            symtab[i].evaluated = false;
-            symtab[i].value = 0;
-        }
-    }
-}
-
 long long part2()
 {
     SYMBOL *root = lookup("root");
     SYMBOL *humn = lookup("humn");
-    AST *left = root->def->l;
-    AST *right = root->def->r;
 
-    printf("%lld %lld %lld\n",eval(left), eval(right), eval(right)-eval(left));
+    SYMBOL *this = humn, *next, *other;
 
-    long long *my_num = &(((NUMNODE *)(humn->def))->number), my_const = 3272260910000; 
+    char path[400][5] = {0};
+    int path_length = 0;
 
-    int i = 0;
-
-    while(i < 10000)
+    while(this != root)
     {
-        reset_symbols();
+        strcpy(path[path_length],this->name);
+        path_length++;
 
-        *my_num = my_const + i;
-
-        eval(root->def);
-
-        if(eval(right)-eval(left) == 0) return *my_num;
-        i++;
+        for(int i = 0; i < N_HASH; i++)
+        {
+            next = &symtab[i];
+            if(next->name) {
+                if(next->l == this) {
+                    this = next;
+                    break;
+                } else if (next->r == this) {
+                    this = next;
+                    break;
+                }
+            } 
+        }
     }
-    return 0;
+        
+    strcpy(path[path_length],this->name);
+
+    long long new_value, prev_value, operand;
+
+    this = lookup("root");
+
+    if(!strcmp(this->l->name, path[path_length-1])) {
+        prev_value = this->r->value; next = this->l; other = this->r;
+    } else {
+        prev_value = this->l->value; next = this->r; other = this->l;
+    }
+
+    printf("%s l:%s:%16lld r:%s:%16lld op:%c next:%s %16lld\n",
+        this->name, this->l->name, this->l->value,
+        this->r->name,this->r->value,this->def->nodetype,next->name, prev_value);
+
+    for (int i = path_length - 1; i > 0; i--) 
+    {
+
+        this = lookup(path[i]);
+
+        if(!strcmp(this->l->name, path[i-1])) {
+            next = this->l; other = this->r;
+        } else {
+            next = this->r; other = this->l;
+        }
+
+        // this node's value was produced from l and r via op 
+        // the other value is constant, so what value do we need to set 
+        // new value to be, to recover prev value? 
+
+        switch(this->def->nodetype){
+            case '+': new_value = prev_value - other->value; break;
+            case '-': new_value = prev_value + other->value; break;
+            case '*': new_value = prev_value / other->value; break;
+            case '/': new_value = prev_value * other->value; break;
+            default: printf("%c\n",this->def->nodetype);
+        }
+
+        printf("%s l:%s:%16lld r:%s:%16lld op:%c next:%s %16lld\n",
+            this->name, this->l->name, this->l->value,
+            this->r->name,this->r->value,this->def->nodetype,next->name, new_value);
+
+        prev_value = new_value;
+    }
+
+    return new_value;
 }

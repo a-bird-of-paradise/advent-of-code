@@ -13,6 +13,8 @@ typedef struct symbol_t {
     long long value;
     bool evaluated; 
     struct ast_t *def;
+    struct symbol_t *l;
+    struct symbol_t *r;
 }   SYMBOL;
 
 #define N_HASH 9997
@@ -53,5 +55,4 @@ AST *newnum(long long x);
 long long eval(AST *x);
 void treefree(AST *x);
 
-void reset_symbols();
 long long part2(void);
