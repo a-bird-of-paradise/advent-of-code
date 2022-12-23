@@ -5,7 +5,7 @@
 #include "22.h"
 
 char field [200][201] = {0}; // [row][col] [y][x]
-char *line = NULL;
+char *line = NULL, *line2 = NULL;
 size_t linecap = 0;
 ssize_t linelen;
 YY_BUFFER_STATE hndl;
@@ -22,6 +22,7 @@ int main(int argc, char **argv)
         strncpy(field[counter++],line,linelen-1);
 
     linelen = getline(&line, &linecap, stdin);
+    line2 = strdup(line); // flex pollutes the buffer so take a copy for part 2
 
     hndl = yy_scan_string(line);
 
@@ -32,7 +33,9 @@ int main(int argc, char **argv)
     
     for(int i = 0; i <200; i++) field[i][200]=0;
 
-    // init nodes...
+    #pragma region init_part_1
+
+    // init nodes for part 1
     for(int i = 0; i < 200; i++){
         for(int j = 0; j < 200; j++){
             if(field[i][j] == '.' || field[i][j] == '#') {
@@ -79,6 +82,9 @@ int main(int argc, char **argv)
         }
     }
 
+    #pragma endregion init_part_1
+
+    #pragma region move_part_1
 
     POSITION location;
     location.f = RIGHT;
@@ -147,8 +153,11 @@ int main(int argc, char **argv)
     printf("%10d %10d %10d\n",location.x,location.y,location.f);
     printf("%20d\n",1000 * (location.y+1) + 4*(location.x+1) + location.f);
 
+    #pragma endregion move_part_1
+
     yy_delete_buffer(hndl);
     free(line);
+    free(line2);
 
     return 0;
 }

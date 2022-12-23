@@ -19,6 +19,7 @@ OBJS=$(SOURCES:.c=.o)
 
 answer: 22 input.txt testinput.txt
 	./22 < testinput.txt
+	./22 < input.txt
 
 22: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@
