@@ -12,14 +12,13 @@ LIBS=
 CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 
-SOURCES=main.c lex.yy.c
+SOURCES=main.c lex.yy.c move_1.c init_1.c move_2_test.c init_2_test.c
 OBJS=$(SOURCES:.c=.o)
 
 .PHONY: answer
 
 answer: 22 input.txt testinput.txt
 	./22 < testinput.txt
-	./22 < input.txt
 
 22: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@
