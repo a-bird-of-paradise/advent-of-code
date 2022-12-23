@@ -15,6 +15,7 @@ typedef struct node_t {
     bool is_edge;
     FACING post_edge_facing;
     FACING which_edge;
+    char label;
 } NODE;
 
 extern char field[200][201];
@@ -24,7 +25,10 @@ int mod (const int a, const int b);
 void move_1(void);
 void init_part_1(void);
 void init_part_2_test(void);
+void init_part_2_real(void);
 
 int abs(const int x);
 void print_facing(FACING x);
 void print_nodes(void);
+
+extern bool alt;

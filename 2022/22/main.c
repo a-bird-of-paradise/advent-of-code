@@ -11,6 +11,8 @@ int mod(const int a, const int b) { return (a%b + b)%b; }
 
 int abs(const int x) { return x > 0 ? x : -x; }
 
+bool alt = false; // control move()
+
 void print_nodes(void)
 {
     printf("   ");

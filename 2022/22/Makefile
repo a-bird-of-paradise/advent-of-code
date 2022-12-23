@@ -5,20 +5,21 @@ INCLUDE=-I/usr/local/opt/flex/include/ -I/usr/local/opt/llvm/include
 LDFLAGS=-L/usr/local/opt/llvm/lib -L/usr/local/opt/llvm/lib/c++ -Wl,-rpath,/usr/local/opt/llvm/lib/c++
 DBGFLAGS=-fsanitize=address -g -fsanitize=leak -fsanitize=undefined -fsanitize=integer
 FASTFLAGS=-Ofast -flto=full
-CXXFLAGS=$(DBGFLAGS) -std=c++2b
-CFLAGS=$(DBGFLAGS) -std=c99 -march=native
+CXXFLAGS=$(FASTFLAGS) -std=c++2b
+CFLAGS=$(FASTFLAGS) -std=c99 -march=native
 LIBS=
 
 CC=/usr/local/opt/llvm/bin/clang
 CXX=/usr/local/opt/llvm/bin/clang++
 
-SOURCES=main.c lex.yy.c move_1.c init_1.c move_2_test.c init_2_test.c
+SOURCES=lex.yy.c main.c move_1.c init_1.c init_2_test.c init_2_real.c
 OBJS=$(SOURCES:.c=.o)
 
 .PHONY: answer
 
 answer: 22 input.txt testinput.txt
 	./22 < testinput.txt
+	./22 < input.txt
 
 22: $(OBJS)
 	$(CC) $(CFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@

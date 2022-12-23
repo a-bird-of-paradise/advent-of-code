@@ -13,7 +13,8 @@ void move_1(void)
     location.x = counter;
     
     int next_x, next_y, orig_x, orig_y; 
-    bool noisy = true, crossing_edge = false;
+    bool noisy = false, crossing_edge = false;
+    char prev_label, new_label;
 
     while((counter = yylex()))
     {
@@ -62,17 +63,48 @@ void move_1(void)
                     default:    break;
                 }
 
-                switch(field[next_y][next_x]) {
-                    case '.':   location.x = next_x; location.y = next_y; counter--; 
-                                    if(abs(orig_x-next_x) > 1 || abs(orig_y-next_y)>1)
-                                        location.f = nodes[next_y][next_x].post_edge_facing;
-                                break;
-                    case '#':   counter = 0; break;
-                    case ' ':   printf("oh no\n"); break;
-                    default:    break;
+                if(!alt)
+                {
+                    switch(field[next_y][next_x]) {
+                        case '.':   location.x = next_x; location.y = next_y; counter--; 
+                                        if(abs(orig_x-next_x) > 1 || abs(orig_y-next_y)>1)
+                                            location.f = nodes[next_y][next_x].post_edge_facing;
+                                    break;
+                        case '#':   counter = 0; break;
+                        case ' ':   printf("oh no\n"); break;
+                        default:    break;
+                    }
+                }
 
-                
+                if(alt) {
+                    switch(field[next_y][next_x]) {
+                        case '.':   location.x = next_x; location.y = next_y; counter--; 
+                                    prev_label = nodes[orig_y][orig_x].label;
+                                    new_label = nodes[next_y][next_x].label;
+                                    if(new_label == 'A' && prev_label == 'F') location.f = DOWN;
+                                    if(new_label == 'B' && prev_label == 'F') location.f = DOWN;
+                                    if(new_label == 'D' && prev_label == 'C') location.f = DOWN;
 
+                                    if(new_label == 'A' && prev_label == 'D') location.f = RIGHT;
+                                    if(new_label == 'C' && prev_label == 'D') location.f = RIGHT;
+                                    if(new_label == 'D' && prev_label == 'A') location.f = RIGHT;
+                                    if(new_label == 'F' && prev_label == 'A') location.f = RIGHT;
+
+                                    if(new_label == 'F' && prev_label == 'B') location.f = UP;
+                                    if(new_label == 'E' && prev_label == 'F') location.f = UP;
+                                    if(new_label == 'B' && prev_label == 'C') location.f = UP;
+
+                                    if(new_label == 'F' && prev_label == 'E') location.f = LEFT;
+                                    if(new_label == 'E' && prev_label == 'B') location.f = LEFT;
+                                    if(new_label == 'C' && prev_label == 'B') location.f = LEFT;
+                                    if(new_label == 'B' && prev_label == 'E') location.f = LEFT;
+
+
+                                    break;
+                        case '#':   counter = 0; break;
+                        case ' ':   printf("oh no\n"); break;
+                        default:    break;
+                    }
                 }
             }
         }
