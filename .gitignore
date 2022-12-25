@@ -56,3 +56,5 @@ lex.yy.c
 *.tab.c
 *.tab.h
 lex.yy.h
+testinput.txt
+input.txt
