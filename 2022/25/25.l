@@ -7,12 +7,10 @@ int col = 0, part1[100] = {0};
 
 %%
 
-=       {   cval *= 5;  cval +=-2;  }
--       {   cval *= 5;  cval +=-1;  }
-0       {   cval *= 5;  cval += 0;  }
-1       {   cval *= 5;  cval += 1;  }
-2       {   cval *= 5;  cval += 2;  }
-\n      {   tval += cval; cval = 0; }
+=       {   cval *= 5;  cval +=-2;              }
+-       {   cval *= 5;  cval +=-1;              }
+[0-2]   {   cval *= 5;  cval += atoi(yytext);   }
+\n      {   tval += cval; cval = 0;             }
 <<EOF>> {   
 
 while(tval > 0) {part1[col++]=tval % 5; tval /= 5;}
