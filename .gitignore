@@ -53,8 +53,12 @@ dkms.conf
 
 # parser and lexer intermediates
 lex.yy.c
+*.lex.cpp
 *.tab.c
 *.tab.h
 lex.yy.h
 testinput.txt
 input.txt
+
+# vscode
+.vscode/
