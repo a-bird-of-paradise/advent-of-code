@@ -59,6 +59,9 @@ lex.yy.c
 lex.yy.h
 testinput.txt
 input.txt
+parser.cpp
+parser.hpp
+location.hh
 
 # vscode
 .vscode/
