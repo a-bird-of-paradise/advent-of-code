@@ -19,7 +19,7 @@ OBJS=$(SOURCES:.cpp=.o)
 
 answer: 06 input.txt testinput.txt
 	./06 < testinput.txt
-#	./06 < input.txt
+	./06 < input.txt
 
 06: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@
