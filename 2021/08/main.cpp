@@ -1,7 +1,7 @@
 #include "parser.hpp"
 #include "context.hpp"
 #include "scanner.hpp"
-#include <cstdlib>
+#include <iomanip>
 
 int main (int argc, char **argv)
 {
@@ -10,58 +10,105 @@ int main (int argc, char **argv)
     aoc::context Context;
     aoc::parser Parser(Scanner,Context);
 
-    Parser.parse();
+    if(Parser.parse() != 0) abort();
 
-#pragma region // part one: first the easy bit ... 
+    unsigned counts[10] = {0}, answer = 0, accum;
 
-    long answer_1 = 0; 
+    for(auto & line : Context.lines)
+    {
+        unsigned pattern[10] = {0};
 
-    for(auto & i : Context.lines)
-        for(auto & j : i.second)
-            if(j.size() == 2 || j.size() == 3 || j.size() == 4 || j.size() == 7)
-                answer_1++;
+        pattern[1] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [](unsigned i) { return std::popcount(i) == 2; }
+        );
 
-    std::cout << answer_1 << std::endl;
+        pattern[4] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [](unsigned i) { return std::popcount(i) == 4; }
+        );
 
-#pragma endregion
+        pattern[7] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [](unsigned i) { return std::popcount(i) == 3; }
+        );
 
-#pragma region // validate every input has one of each unique length...
+        pattern[8] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [](unsigned i) { return std::popcount(i) == 7; }
+        );
 
-    long a2 = 0, a3 = 0, a4 = 0, a7 = 0;
-    bool s2,s3,s4,s7;
+        pattern[3] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 5 && (i & pattern[7]) == pattern[7]; }
+        );
 
-    for(auto & i : Context.lines){
-        s2 = false;
-        s3 = false;
-        s4 = false;
-        s7 = false;
-        for(auto & j : i.first) {
-            switch(j.size()){
-                case 2:
-                    s2 = true;
+        pattern[9] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 6 && (i & pattern[4]) == pattern[4]; }
+        );
+
+        pattern[5] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 5 
+                && (i | pattern[9]) == pattern[9]
+                && i != pattern[3]; }
+        );
+
+        pattern[2] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 5 
+                && i != pattern[5]
+                && i != pattern[3]; }
+        );
+
+        pattern[6] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 6 
+                && (i & pattern[5]) == pattern[5]
+                && i != pattern[9]; }
+        );
+
+        pattern[0] = *std::find_if(
+            line.first.begin(),
+            line.first.end(),
+            [&](unsigned i) { return std::popcount(i) == 6 
+                && i != pattern[6]
+                && i != pattern[9]; }
+        ); 
+
+        accum = 1;
+        
+        for(auto & j : line.second)
+        {
+            for(unsigned k = 0; k < 10; k++)
+            {
+                if(j == pattern[k]) {
+                    counts[k]++;
+                    accum *= 10;
+                    accum += k;
                     break;
-                case 3:
-                    s3 = true;
-                    break;
-                case 4:
-                    s4 = true;
-                    break;
-                case 7:
-                    s7 = true;
-                    break;
-                default:
-                    break;
+                }
+
             }
         }
-        if(s2) a2++;
-        if(s3) a3++;
-        if(s4) a4++;
-        if(s7) a7++;
+
+        accum -= 10000;
+        answer += accum;
+
     }
 
-    std::cout << a2 << "|" << a3 <<"|" << a4 << "|" << a7 << "|" << Context.lines.size() << std::endl;
-
-#pragma endregion
+    std::cout << counts[1] + counts[4] + counts[7] + counts[8] << std::endl;
+    std::cout << answer << std::endl;
 
     return 0;
 }

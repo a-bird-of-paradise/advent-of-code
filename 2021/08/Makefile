@@ -17,7 +17,8 @@ OBJS=$(SOURCES:.cpp=.o)
 
 .PHONY: answer
 
-answer: 08 input.txt testinput.txt
+answer: 08 input.txt testinput.txt singleinput.txt
+	./08 < singleinput.txt
 	./08 < testinput.txt
 	./08 < input.txt
 

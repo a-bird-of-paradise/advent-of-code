@@ -7,13 +7,12 @@
 
 %define api.namespace {aoc}
 %define api.parser.class {parser}
+%define api.value.automove
 %define api.token.constructor
-%define api.token.prefix {TOK_}
 %define api.value.type variant
 %define parse.assert
 %define parse.error detailed
 %define parse.lac full
-%define parse.trace
 
 %parse-param {aoc::scanner& Scanner}{aoc::context& Context}
 %lex-param {aoc::context& Context}
@@ -31,12 +30,12 @@ namespace aoc { class scanner; }
 }
 
 %token ENDL
-%token PIPE
-%token <std::string> STRING
+%token SEPARATOR
+%token <unsigned> STRING
 
-%type <list_t> list
 %type <line_t> line
 %type <std::vector<line_t> > lines
+%type <list_t> list
 
 %nterm file
 
@@ -44,7 +43,7 @@ namespace aoc { class scanner; }
 
 file
     :
-    lines       {   Context.lines = $1; }
+    lines   {   Context.lines = $1; }
     ;
 
 lines
@@ -55,7 +54,7 @@ lines
 
 line
     :
-    list PIPE list ENDL {   $$.first = $1; $$.second = $3;  }
+    list SEPARATOR list ENDL  {   $$.first = $1; $$.second = $3;  }
     ;
 
 list

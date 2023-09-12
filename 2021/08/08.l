@@ -9,10 +9,15 @@
 
 %%
 
-[a-g]+  {   return aoc::parser::make_STRING(YYText(), Context.loc);         }
-\|      {   return aoc::parser::make_PIPE(Context.loc);                     }
-\n      {   return aoc::parser::make_ENDL(Context.loc);                     }
-[ ]     {                                                                   }
-.       {   std::cout << "Unexpected character " << *YYText() << std::endl; }
-
-<<EOF>> {   return aoc::parser::make_YYEOF(Context.loc);                    }
+[a-g]+  {   unsigned answer = 0;
+            for(std::size_t i = 0; i < YYLeng(); i++)
+                answer |= ( (unsigned)1 <<( YYText()[i] - 'a'));
+            return aoc::parser::make_STRING(answer,Context.loc);
+        }
+\n      {   Context.loc.lines(); 
+            return aoc::parser::make_ENDL(Context.loc);                     
+        }
+[ ]     {                                                       }
+\|      {   return aoc::parser::make_SEPARATOR(Context.loc);    }
+.       {   return aoc::parser::make_YYUNDEF(Context.loc);      }
+<<EOF>> {   return aoc::parser::make_YYEOF(Context.loc);        }
