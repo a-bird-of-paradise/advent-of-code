@@ -7,8 +7,8 @@
 
 %define api.namespace {aoc}
 %define api.parser.class {parser}
-%define api.value.automove
 %define api.token.constructor
+%define api.value.automove
 %define api.value.type variant
 %define parse.assert
 %define parse.error detailed
