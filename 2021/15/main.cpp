@@ -2,8 +2,6 @@
 #include "context.hpp"
 #include "scanner.hpp"
 #include "funcs.hpp"
-#include <set>
-#include <ranges>
 
 int main (int argc, char **argv)
 {
