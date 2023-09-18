@@ -1,7 +1,6 @@
 #include "funcs.hpp"
-#include <ranges>
-#include <set>
-
+#include <map>
+#include <queue> 
 void aoc::parser::error(aoc::location const& loc, std::string const& msg)
 {
     std::cerr << loc << ": " << msg << std::endl;
@@ -12,44 +11,37 @@ long pathfinder(const aoc::graph& Graph)
 
     std::cout << "pathfinding..." << std::endl;
 
-    std::vector<long> dist(Graph.nodes.size(),INT32_MAX);
-    std::vector<int> path(Graph.nodes.size(),-1);
-    std::set<int> unvisited;
+    std::vector<long> dist(Graph.nodes.size(),INT16_MAX); // avoid overflows
+    std::vector<long> path(Graph.nodes.size(),-1);
 
-    for(auto & node : Graph.nodes) unvisited.insert(node.id);
+    auto cmp = [&](const auto & left, const auto & right){ return dist[right.id] < dist[left.id];};
+    std::priority_queue<aoc::node,std::vector<aoc::node>, decltype(cmp)> pq(cmp);
+    for(auto i : Graph.nodes) pq.push(i);
+
+    std::map<int, std::vector<aoc::edge>> edge_map;
+    for(auto & i : Graph.edges) edge_map[i.source_id].push_back(i);
 
     dist[0]=0;
 
-    while(unvisited.size() != 0) {
+    while(pq.size() != 0) {
 
-        std::cout << unvisited.size() << std::endl;
+        int min_id = pq.top().id;
+        pq.pop();
 
-        int min_id = -1;
-        long min_distance = INT32_MAX;
+        int min_distance = dist[min_id];
 
-        for(auto & i : unvisited) {
-            if(dist[i] < min_distance) {
-                min_distance = dist[i];
-                min_id = i;
-            }
-        }
-
-        if(min_id == Graph.nodes.back().id) break;
-
-        unvisited.erase(min_id);
-
-        auto edges = Graph.edges | std::views::filter(
-            [&](const auto & e) {
-                return e.source_id == min_id && unvisited.contains(e.destination_id);
-            }
-        );
-
-        for(auto & e : edges)
+        for(auto & e : edge_map[min_id])
         {
+            //if(!pq.contains(e.destination_id)) continue;
             long alt = dist[min_id] + e.weight;
             if(alt < dist[e.destination_id]) {
                 dist[e.destination_id] = alt;
                 path[e.destination_id] = min_id;
+                pq.push(Graph.nodes[e.destination_id]);
+                // this creates duplicates in the PQ, but it refreshes the priority
+                // so the last step will be popping lots of stale things from the pq
+                // alternative is searching for them and updating and reordering PQ
+                // hard to say which is more efficient 
             }
         }
     }
@@ -61,7 +53,7 @@ aoc::graph make_graph(const std::vector<std::vector<int>>& board)
 {
 
     std::cout << "graphing..." << std::endl;
-    int node_counter = 0;
+    long node_counter = 0;
 
     aoc::graph Graph;
 
@@ -73,73 +65,63 @@ aoc::graph make_graph(const std::vector<std::vector<int>>& board)
         }
     }
 
-    for(std::size_t i = 0; i < board.size(); i++) {
-        for(std::size_t j = 0; j < board[i].size(); j++) {
-            std::cout << i << " " << j << std::endl;
-            aoc::node current {}, next {};
-            current = *std::find_if(
-                Graph.nodes.begin(), 
-                Graph.nodes.end(),
-                [i,j](const auto & n) { return n.x == i && n.y == j; }
-            );
+    // assumption: square board
+    // so (x,y) -> nx + y id 
 
-            if(auto result = std::find_if(
-                Graph.nodes.begin(), 
-                Graph.nodes.end(),
-                [i,j](const auto & n) { return n.x == i && n.y == j+1; });
-                result != Graph.nodes.end()) {
-                    aoc::edge the_edge;
-                    the_edge.source_id = current.id;
-                    the_edge.destination_id = result->id;
-                    the_edge.weight = board[result->x][result->y];
-                    Graph.edges.push_back(the_edge);
+    std::size_t n = board.size(); 
+
+    for(std::size_t x = 0; x < n; x++){
+        for(std::size_t y = 0; y < n; y++) {
+            std::size_t id = n * x + y ; 
+            aoc::node current = Graph.nodes[id];
+            aoc::node next {};
+            aoc::edge e {};
+            // up 
+
+            if(x>0) {
+                next = Graph.nodes[n * (x-1) + y];
+                e.source_id = id;
+                e.destination_id = n * (x-1) + y;
+                e.weight = board[x-1][y];
+                Graph.edges.push_back(e);
             }
 
-            if(auto result = std::find_if(
-                Graph.nodes.begin(), 
-                Graph.nodes.end(),
-                [i,j](const auto & n) { return n.x == i && n.y == j-1; });
-                result != Graph.nodes.end()) {
-                    aoc::edge the_edge;
-                    the_edge.source_id = current.id;
-                    the_edge.destination_id = result->id;
-                    the_edge.weight = board[result->x][result->y];
-                    Graph.edges.push_back(the_edge);
+            // down
+
+            if(x<n-1) {
+                next = Graph.nodes[n * (x+1) + y];
+                e.source_id = id;
+                e.destination_id = n * (x+1) + y;
+                e.weight = board[x+1][y];
+                Graph.edges.push_back(e);
             }
 
-            if(auto result = std::find_if(
-                Graph.nodes.begin(), 
-                Graph.nodes.end(),
-                [i,j](const auto & n) { return n.x == i+1 && n.y == j; });
-                result != Graph.nodes.end()) {
-                    aoc::edge the_edge;
-                    the_edge.source_id = current.id;
-                    the_edge.destination_id = result->id;
-                    the_edge.weight = board[result->x][result->y];
-                    Graph.edges.push_back(the_edge);
+            // left 
+
+            if(y>0) {
+                next = Graph.nodes[n * x + y-1];
+                e.source_id = id;
+                e.destination_id = n * x + y-1;
+                e.weight = board[x][y-1];
+                Graph.edges.push_back(e);
             }
 
-            if(auto result = std::find_if(
-                Graph.nodes.begin(), 
-                Graph.nodes.end(),
-                [i,j](const auto & n) { return n.x == i-1 && n.y == j; });
-                result != Graph.nodes.end()) {
-                    aoc::edge the_edge;
-                    the_edge.source_id = current.id;
-                    the_edge.destination_id = result->id;
-                    the_edge.weight = board[result->x][result->y];
-                    Graph.edges.push_back(the_edge);
+            // right 
+
+            if(y<n-1) {
+                next = Graph.nodes[n * x + y + 1];
+                e.source_id = id;
+                e.destination_id = n * x + y + 1;
+                e.weight = board[x][y+1];
+                Graph.edges.push_back(e);
             }
         }
     }
-
     return Graph;
 }
 
 std::vector<std::vector<int>> embiggen(const std::vector<std::vector<int>>& tile)
 {
-
-
     std::cout << "embiggenning..." << std::endl; 
     typedef std::vector<std::vector<int>> tile_t;
 
@@ -153,7 +135,6 @@ std::vector<std::vector<int>> embiggen(const std::vector<std::vector<int>>& tile
         }
     }
             
-
     for(std::size_t i = 0; i < 5; i++) {
         for(std::size_t j = 0; j < 5; j++) {
             for(std::size_t k = 0; k < tiles[i][j].size(); k++){

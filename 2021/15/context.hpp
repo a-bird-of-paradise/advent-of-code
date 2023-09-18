@@ -9,12 +9,12 @@ namespace aoc
     struct node {
         int x;
         int y;
-        int id;
+        long id;
     };
 
     struct edge {
-        int source_id;
-        int destination_id;
+        long source_id;
+        long destination_id;
         int weight;
     };
 
