@@ -201,7 +201,7 @@ data_payload
 
 lead_data_segments
     :  
-    lead_data_segment                       {   $$ = $1;                        }
+    lead_data_segment                           {   $$ = $1;                        }
     |   lead_data_segments lead_data_segment    {   $$ = $1; $$ <<= 4; $$ += $2;    }
     ;
 
