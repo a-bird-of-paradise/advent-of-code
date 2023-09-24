@@ -1,0 +1,727 @@
+State 28 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: line $end
+
+    1 line: packet TERMINATOR trailing ENDL
+
+    2 bit: ZERO
+    3    | ONE
+
+    4 packet: operator_packet
+    5       | data_packet
+
+    6 packets: packet
+    7        | packets packet
+
+    8 data_packet: version ONE ZERO ZERO data_payload
+
+    9 operator_packet: version ZERO ZERO ZERO payload
+   10                | version ZERO ZERO ONE payload
+   11                | version ZERO ONE ZERO payload
+   12                | version ZERO ONE ONE payload
+   13                | version ONE ZERO ONE payload
+   14                | version ONE ONE ZERO payload
+   15                | version ONE ONE ONE payload
+
+   16 version: bit bit bit
+
+   17 payload: length packets TERMINATOR
+
+   18 length: lead_length_bit length_inner TERMINATOR
+
+   19 lead_length_bit: ZERO
+   20                | ONE
+
+   21 length_inner: bit
+   22             | length_inner bit
+
+   23 data_payload: lead_data_segments end_data_segment
+
+   24 lead_data_segments: ε
+   25                   | lead_data_segment
+   26                   | lead_data_segments lead_data_segment
+
+   27 lead_data_segment: ONE bit bit bit bit
+
+   28 end_data_segment: ZERO bit bit bit bit
+
+   29 trailing: ε
+   30         | zeroes
+
+   31 zeroes: ZERO
+   32       | zeroes ZERO
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    ZERO (258) 2 8 9 10 11 12 13 14 19 28 31 32
+    ONE (259) 3 8 10 11 12 13 14 15 20 27
+    ENDL (260) 1
+    TERMINATOR (261) 1 17 18
+
+
+Nonterminals, with rules where they appear
+
+    $accept (7)
+        on left: 0
+    line (8)
+        on left: 1
+        on right: 0
+    bit <int> (9)
+        on left: 2 3
+        on right: 16 21 22 27 28
+    packet <aoc::packet> (10)
+        on left: 4 5
+        on right: 1 6 7
+    packets < std::vector<aoc::packet> > (11)
+        on left: 6 7
+        on right: 7 17
+    data_packet <aoc::packet> (12)
+        on left: 8
+        on right: 5
+    operator_packet <aoc::packet> (13)
+        on left: 9 10 11 12 13 14 15
+        on right: 4
+    version <int> (14)
+        on left: 16
+        on right: 8 9 10 11 12 13 14 15
+    payload < std::vector<aoc::packet> > (15)
+        on left: 17
+        on right: 9 10 11 12 13 14 15
+    length <std::pair<int, long long> > (16)
+        on left: 18
+        on right: 17
+    lead_length_bit <int> (17)
+        on left: 19 20
+        on right: 18
+    length_inner <unsigned> (18)
+        on left: 21 22
+        on right: 18 22
+    data_payload <long long> (19)
+        on left: 23
+        on right: 8
+    lead_data_segments <long long> (20)
+        on left: 24 25 26
+        on right: 23 26
+    lead_data_segment <long long> (21)
+        on left: 27
+        on right: 25 26
+    end_data_segment <long long> (22)
+        on left: 28
+        on right: 23
+    trailing (23)
+        on left: 29 30
+        on right: 1
+    zeroes (24)
+        on left: 31 32
+        on right: 30 32
+
+
+State 0
+
+    0 $accept: • line $end
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    line             go to state 3
+    bit              go to state 4
+    packet           go to state 5
+    data_packet      go to state 6
+    operator_packet  go to state 7
+    version          go to state 8
+
+
+State 1
+
+    2 bit: ZERO •
+
+    $default  reduce using rule 2 (bit)
+
+
+State 2
+
+    3 bit: ONE •
+
+    $default  reduce using rule 3 (bit)
+
+
+State 3
+
+    0 $accept: line • $end
+
+    $end  shift, and go to state 9
+
+
+State 4
+
+   16 version: bit • bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 10
+
+
+State 5
+
+    1 line: packet • TERMINATOR trailing ENDL
+
+    TERMINATOR  shift, and go to state 11
+
+
+State 6
+
+    5 packet: data_packet •
+
+    $default  reduce using rule 5 (packet)
+
+
+State 7
+
+    4 packet: operator_packet •
+
+    $default  reduce using rule 4 (packet)
+
+
+State 8
+
+    8 data_packet: version • ONE ZERO ZERO data_payload
+    9 operator_packet: version • ZERO ZERO ZERO payload
+   10                | version • ZERO ZERO ONE payload
+   11                | version • ZERO ONE ZERO payload
+   12                | version • ZERO ONE ONE payload
+   13                | version • ONE ZERO ONE payload
+   14                | version • ONE ONE ZERO payload
+   15                | version • ONE ONE ONE payload
+
+    ZERO  shift, and go to state 12
+    ONE   shift, and go to state 13
+
+
+State 9
+
+    0 $accept: line $end •
+
+    $default  accept
+
+
+State 10
+
+   16 version: bit bit • bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 14
+
+
+State 11
+
+    1 line: packet TERMINATOR • trailing ENDL
+
+    ZERO  shift, and go to state 15
+
+    $default  reduce using rule 29 (trailing)
+
+    trailing  go to state 16
+    zeroes    go to state 17
+
+
+State 12
+
+    9 operator_packet: version ZERO • ZERO ZERO payload
+   10                | version ZERO • ZERO ONE payload
+   11                | version ZERO • ONE ZERO payload
+   12                | version ZERO • ONE ONE payload
+
+    ZERO  shift, and go to state 18
+    ONE   shift, and go to state 19
+
+
+State 13
+
+    8 data_packet: version ONE • ZERO ZERO data_payload
+   13 operator_packet: version ONE • ZERO ONE payload
+   14                | version ONE • ONE ZERO payload
+   15                | version ONE • ONE ONE payload
+
+    ZERO  shift, and go to state 20
+    ONE   shift, and go to state 21
+
+
+State 14
+
+   16 version: bit bit bit •
+
+    $default  reduce using rule 16 (version)
+
+
+State 15
+
+   31 zeroes: ZERO •
+
+    $default  reduce using rule 31 (zeroes)
+
+
+State 16
+
+    1 line: packet TERMINATOR trailing • ENDL
+
+    ENDL  shift, and go to state 22
+
+
+State 17
+
+   30 trailing: zeroes •
+   32 zeroes: zeroes • ZERO
+
+    ZERO  shift, and go to state 23
+
+    $default  reduce using rule 30 (trailing)
+
+
+State 18
+
+    9 operator_packet: version ZERO ZERO • ZERO payload
+   10                | version ZERO ZERO • ONE payload
+
+    ZERO  shift, and go to state 24
+    ONE   shift, and go to state 25
+
+
+State 19
+
+   11 operator_packet: version ZERO ONE • ZERO payload
+   12                | version ZERO ONE • ONE payload
+
+    ZERO  shift, and go to state 26
+    ONE   shift, and go to state 27
+
+
+State 20
+
+    8 data_packet: version ONE ZERO • ZERO data_payload
+   13 operator_packet: version ONE ZERO • ONE payload
+
+    ZERO  shift, and go to state 28
+    ONE   shift, and go to state 29
+
+
+State 21
+
+   14 operator_packet: version ONE ONE • ZERO payload
+   15                | version ONE ONE • ONE payload
+
+    ZERO  shift, and go to state 30
+    ONE   shift, and go to state 31
+
+
+State 22
+
+    1 line: packet TERMINATOR trailing ENDL •
+
+    $default  reduce using rule 1 (line)
+
+
+State 23
+
+   32 zeroes: zeroes ZERO •
+
+    $default  reduce using rule 32 (zeroes)
+
+
+State 24
+
+    9 operator_packet: version ZERO ZERO ZERO • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 34
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 25
+
+   10 operator_packet: version ZERO ZERO ONE • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 37
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 26
+
+   11 operator_packet: version ZERO ONE ZERO • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 38
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 27
+
+   12 operator_packet: version ZERO ONE ONE • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 39
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 28
+
+    8 data_packet: version ONE ZERO ZERO • data_payload
+
+    ONE  shift, and go to state 40
+
+    ONE       [reduce using rule 24 (lead_data_segments)]
+    $default  reduce using rule 24 (lead_data_segments)
+
+    data_payload        go to state 41
+    lead_data_segments  go to state 42
+    lead_data_segment   go to state 43
+
+
+State 29
+
+   13 operator_packet: version ONE ZERO ONE • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 44
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 30
+
+   14 operator_packet: version ONE ONE ZERO • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 45
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 31
+
+   15 operator_packet: version ONE ONE ONE • payload
+
+    ZERO  shift, and go to state 32
+    ONE   shift, and go to state 33
+
+    payload          go to state 46
+    length           go to state 35
+    lead_length_bit  go to state 36
+
+
+State 32
+
+   19 lead_length_bit: ZERO •
+
+    $default  reduce using rule 19 (lead_length_bit)
+
+
+State 33
+
+   20 lead_length_bit: ONE •
+
+    $default  reduce using rule 20 (lead_length_bit)
+
+
+State 34
+
+    9 operator_packet: version ZERO ZERO ZERO payload •
+
+    $default  reduce using rule 9 (operator_packet)
+
+
+State 35
+
+   17 payload: length • packets TERMINATOR
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit              go to state 4
+    packet           go to state 47
+    packets          go to state 48
+    data_packet      go to state 6
+    operator_packet  go to state 7
+    version          go to state 8
+
+
+State 36
+
+   18 length: lead_length_bit • length_inner TERMINATOR
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit           go to state 49
+    length_inner  go to state 50
+
+
+State 37
+
+   10 operator_packet: version ZERO ZERO ONE payload •
+
+    $default  reduce using rule 10 (operator_packet)
+
+
+State 38
+
+   11 operator_packet: version ZERO ONE ZERO payload •
+
+    $default  reduce using rule 11 (operator_packet)
+
+
+State 39
+
+   12 operator_packet: version ZERO ONE ONE payload •
+
+    $default  reduce using rule 12 (operator_packet)
+
+
+State 40
+
+   27 lead_data_segment: ONE • bit bit bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 51
+
+
+State 41
+
+    8 data_packet: version ONE ZERO ZERO data_payload •
+
+    $default  reduce using rule 8 (data_packet)
+
+
+State 42
+
+   23 data_payload: lead_data_segments • end_data_segment
+   26 lead_data_segments: lead_data_segments • lead_data_segment
+
+    ZERO  shift, and go to state 52
+    ONE   shift, and go to state 40
+
+    lead_data_segment  go to state 53
+    end_data_segment   go to state 54
+
+
+State 43
+
+   25 lead_data_segments: lead_data_segment •
+
+    $default  reduce using rule 25 (lead_data_segments)
+
+
+State 44
+
+   13 operator_packet: version ONE ZERO ONE payload •
+
+    $default  reduce using rule 13 (operator_packet)
+
+
+State 45
+
+   14 operator_packet: version ONE ONE ZERO payload •
+
+    $default  reduce using rule 14 (operator_packet)
+
+
+State 46
+
+   15 operator_packet: version ONE ONE ONE payload •
+
+    $default  reduce using rule 15 (operator_packet)
+
+
+State 47
+
+    6 packets: packet •
+
+    $default  reduce using rule 6 (packets)
+
+
+State 48
+
+    7 packets: packets • packet
+   17 payload: length packets • TERMINATOR
+
+    ZERO        shift, and go to state 1
+    ONE         shift, and go to state 2
+    TERMINATOR  shift, and go to state 55
+
+    bit              go to state 4
+    packet           go to state 56
+    data_packet      go to state 6
+    operator_packet  go to state 7
+    version          go to state 8
+
+
+State 49
+
+   21 length_inner: bit •
+
+    $default  reduce using rule 21 (length_inner)
+
+
+State 50
+
+   18 length: lead_length_bit length_inner • TERMINATOR
+   22 length_inner: length_inner • bit
+
+    ZERO        shift, and go to state 1
+    ONE         shift, and go to state 2
+    TERMINATOR  shift, and go to state 57
+
+    bit  go to state 58
+
+
+State 51
+
+   27 lead_data_segment: ONE bit • bit bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 59
+
+
+State 52
+
+   28 end_data_segment: ZERO • bit bit bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 60
+
+
+State 53
+
+   26 lead_data_segments: lead_data_segments lead_data_segment •
+
+    $default  reduce using rule 26 (lead_data_segments)
+
+
+State 54
+
+   23 data_payload: lead_data_segments end_data_segment •
+
+    $default  reduce using rule 23 (data_payload)
+
+
+State 55
+
+   17 payload: length packets TERMINATOR •
+
+    $default  reduce using rule 17 (payload)
+
+
+State 56
+
+    7 packets: packets packet •
+
+    $default  reduce using rule 7 (packets)
+
+
+State 57
+
+   18 length: lead_length_bit length_inner TERMINATOR •
+
+    $default  reduce using rule 18 (length)
+
+
+State 58
+
+   22 length_inner: length_inner bit •
+
+    $default  reduce using rule 22 (length_inner)
+
+
+State 59
+
+   27 lead_data_segment: ONE bit bit • bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 61
+
+
+State 60
+
+   28 end_data_segment: ZERO bit • bit bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 62
+
+
+State 61
+
+   27 lead_data_segment: ONE bit bit bit • bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 63
+
+
+State 62
+
+   28 end_data_segment: ZERO bit bit • bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 64
+
+
+State 63
+
+   27 lead_data_segment: ONE bit bit bit bit •
+
+    $default  reduce using rule 27 (lead_data_segment)
+
+
+State 64
+
+   28 end_data_segment: ZERO bit bit bit • bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 65
+
+
+State 65
+
+   28 end_data_segment: ZERO bit bit bit bit •
+
+    $default  reduce using rule 28 (end_data_segment)
