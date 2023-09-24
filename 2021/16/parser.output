@@ -1,6 +1,3 @@
-State 28 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: line $end
@@ -39,9 +36,9 @@ Grammar
    22             | length_inner bit
 
    23 data_payload: lead_data_segments end_data_segment
+   24             | end_data_segment
 
-   24 lead_data_segments: ε
-   25                   | lead_data_segment
+   25 lead_data_segments: lead_data_segment
    26                   | lead_data_segments lead_data_segment
 
    27 lead_data_segment: ONE bit bit bit bit
@@ -103,17 +100,17 @@ Nonterminals, with rules where they appear
         on left: 21 22
         on right: 18 22
     data_payload <long long> (19)
-        on left: 23
+        on left: 23 24
         on right: 8
     lead_data_segments <long long> (20)
-        on left: 24 25 26
+        on left: 25 26
         on right: 23 26
     lead_data_segment <long long> (21)
         on left: 27
         on right: 25 26
     end_data_segment <long long> (22)
         on left: 28
-        on right: 23
+        on right: 23 24
     trailing (23)
         on left: 29 30
         on right: 1
@@ -388,14 +385,13 @@ State 28
 
     8 data_packet: version ONE ZERO ZERO • data_payload
 
-    ONE  shift, and go to state 40
+    ZERO  shift, and go to state 40
+    ONE   shift, and go to state 41
 
-    ONE       [reduce using rule 24 (lead_data_segments)]
-    $default  reduce using rule 24 (lead_data_segments)
-
-    data_payload        go to state 41
-    lead_data_segments  go to state 42
-    lead_data_segment   go to state 43
+    data_payload        go to state 42
+    lead_data_segments  go to state 43
+    lead_data_segment   go to state 44
+    end_data_segment    go to state 45
 
 
 State 29
@@ -405,7 +401,7 @@ State 29
     ZERO  shift, and go to state 32
     ONE   shift, and go to state 33
 
-    payload          go to state 44
+    payload          go to state 46
     length           go to state 35
     lead_length_bit  go to state 36
 
@@ -417,7 +413,7 @@ State 30
     ZERO  shift, and go to state 32
     ONE   shift, and go to state 33
 
-    payload          go to state 45
+    payload          go to state 47
     length           go to state 35
     lead_length_bit  go to state 36
 
@@ -429,7 +425,7 @@ State 31
     ZERO  shift, and go to state 32
     ONE   shift, and go to state 33
 
-    payload          go to state 46
+    payload          go to state 48
     length           go to state 35
     lead_length_bit  go to state 36
 
@@ -463,8 +459,8 @@ State 35
     ONE   shift, and go to state 2
 
     bit              go to state 4
-    packet           go to state 47
-    packets          go to state 48
+    packet           go to state 49
+    packets          go to state 50
     data_packet      go to state 6
     operator_packet  go to state 7
     version          go to state 8
@@ -477,8 +473,8 @@ State 36
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
 
-    bit           go to state 49
-    length_inner  go to state 50
+    bit           go to state 51
+    length_inner  go to state 52
 
 
 State 37
@@ -504,168 +500,123 @@ State 39
 
 State 40
 
+   28 end_data_segment: ZERO • bit bit bit bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 53
+
+
+State 41
+
    27 lead_data_segment: ONE • bit bit bit bit
 
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
 
-    bit  go to state 51
+    bit  go to state 54
 
 
-State 41
+State 42
 
     8 data_packet: version ONE ZERO ZERO data_payload •
 
     $default  reduce using rule 8 (data_packet)
 
 
-State 42
+State 43
 
    23 data_payload: lead_data_segments • end_data_segment
    26 lead_data_segments: lead_data_segments • lead_data_segment
 
-    ZERO  shift, and go to state 52
-    ONE   shift, and go to state 40
+    ZERO  shift, and go to state 40
+    ONE   shift, and go to state 41
 
-    lead_data_segment  go to state 53
-    end_data_segment   go to state 54
+    lead_data_segment  go to state 55
+    end_data_segment   go to state 56
 
 
-State 43
+State 44
 
    25 lead_data_segments: lead_data_segment •
 
     $default  reduce using rule 25 (lead_data_segments)
 
 
-State 44
+State 45
+
+   24 data_payload: end_data_segment •
+
+    $default  reduce using rule 24 (data_payload)
+
+
+State 46
 
    13 operator_packet: version ONE ZERO ONE payload •
 
     $default  reduce using rule 13 (operator_packet)
 
 
-State 45
+State 47
 
    14 operator_packet: version ONE ONE ZERO payload •
 
     $default  reduce using rule 14 (operator_packet)
 
 
-State 46
+State 48
 
    15 operator_packet: version ONE ONE ONE payload •
 
     $default  reduce using rule 15 (operator_packet)
 
 
-State 47
+State 49
 
     6 packets: packet •
 
     $default  reduce using rule 6 (packets)
 
 
-State 48
+State 50
 
     7 packets: packets • packet
    17 payload: length packets • TERMINATOR
 
     ZERO        shift, and go to state 1
     ONE         shift, and go to state 2
-    TERMINATOR  shift, and go to state 55
+    TERMINATOR  shift, and go to state 57
 
     bit              go to state 4
-    packet           go to state 56
+    packet           go to state 58
     data_packet      go to state 6
     operator_packet  go to state 7
     version          go to state 8
 
 
-State 49
+State 51
 
    21 length_inner: bit •
 
     $default  reduce using rule 21 (length_inner)
 
 
-State 50
+State 52
 
    18 length: lead_length_bit length_inner • TERMINATOR
    22 length_inner: length_inner • bit
 
     ZERO        shift, and go to state 1
     ONE         shift, and go to state 2
-    TERMINATOR  shift, and go to state 57
-
-    bit  go to state 58
-
-
-State 51
-
-   27 lead_data_segment: ONE bit • bit bit bit
-
-    ZERO  shift, and go to state 1
-    ONE   shift, and go to state 2
-
-    bit  go to state 59
-
-
-State 52
-
-   28 end_data_segment: ZERO • bit bit bit bit
-
-    ZERO  shift, and go to state 1
-    ONE   shift, and go to state 2
+    TERMINATOR  shift, and go to state 59
 
     bit  go to state 60
 
 
 State 53
 
-   26 lead_data_segments: lead_data_segments lead_data_segment •
-
-    $default  reduce using rule 26 (lead_data_segments)
-
-
-State 54
-
-   23 data_payload: lead_data_segments end_data_segment •
-
-    $default  reduce using rule 23 (data_payload)
-
-
-State 55
-
-   17 payload: length packets TERMINATOR •
-
-    $default  reduce using rule 17 (payload)
-
-
-State 56
-
-    7 packets: packets packet •
-
-    $default  reduce using rule 7 (packets)
-
-
-State 57
-
-   18 length: lead_length_bit length_inner TERMINATOR •
-
-    $default  reduce using rule 18 (length)
-
-
-State 58
-
-   22 length_inner: length_inner bit •
-
-    $default  reduce using rule 22 (length_inner)
-
-
-State 59
-
-   27 lead_data_segment: ONE bit bit • bit bit
+   28 end_data_segment: ZERO bit • bit bit bit
 
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
@@ -673,9 +624,9 @@ State 59
     bit  go to state 61
 
 
-State 60
+State 54
 
-   28 end_data_segment: ZERO bit • bit bit bit
+   27 lead_data_segment: ONE bit • bit bit bit
 
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
@@ -683,9 +634,51 @@ State 60
     bit  go to state 62
 
 
+State 55
+
+   26 lead_data_segments: lead_data_segments lead_data_segment •
+
+    $default  reduce using rule 26 (lead_data_segments)
+
+
+State 56
+
+   23 data_payload: lead_data_segments end_data_segment •
+
+    $default  reduce using rule 23 (data_payload)
+
+
+State 57
+
+   17 payload: length packets TERMINATOR •
+
+    $default  reduce using rule 17 (payload)
+
+
+State 58
+
+    7 packets: packets packet •
+
+    $default  reduce using rule 7 (packets)
+
+
+State 59
+
+   18 length: lead_length_bit length_inner TERMINATOR •
+
+    $default  reduce using rule 18 (length)
+
+
+State 60
+
+   22 length_inner: length_inner bit •
+
+    $default  reduce using rule 22 (length_inner)
+
+
 State 61
 
-   27 lead_data_segment: ONE bit bit bit • bit
+   28 end_data_segment: ZERO bit bit • bit bit
 
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
@@ -695,7 +688,7 @@ State 61
 
 State 62
 
-   28 end_data_segment: ZERO bit bit • bit bit
+   27 lead_data_segment: ONE bit bit • bit bit
 
     ZERO  shift, and go to state 1
     ONE   shift, and go to state 2
@@ -705,13 +698,6 @@ State 62
 
 State 63
 
-   27 lead_data_segment: ONE bit bit bit bit •
-
-    $default  reduce using rule 27 (lead_data_segment)
-
-
-State 64
-
    28 end_data_segment: ZERO bit bit bit • bit
 
     ZERO  shift, and go to state 1
@@ -720,8 +706,25 @@ State 64
     bit  go to state 65
 
 
+State 64
+
+   27 lead_data_segment: ONE bit bit bit • bit
+
+    ZERO  shift, and go to state 1
+    ONE   shift, and go to state 2
+
+    bit  go to state 66
+
+
 State 65
 
    28 end_data_segment: ZERO bit bit bit bit •
 
     $default  reduce using rule 28 (end_data_segment)
+
+
+State 66
+
+   27 lead_data_segment: ONE bit bit bit bit •
+
+    $default  reduce using rule 27 (lead_data_segment)

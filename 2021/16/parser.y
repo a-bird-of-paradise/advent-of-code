@@ -39,8 +39,6 @@ namespace aoc { class scanner; }
 %type <aoc::packet> data_packet operator_packet packet
 %type < std::vector<aoc::packet> > payload packets
 
-%expect 1 // shifting here is exactly the right thing so permit it
-
 %%
 
 line
@@ -194,12 +192,16 @@ data_payload
     {
         $$ = $1; $$ <<= 4; $$ += $2; 
     }
+    |
+    end_data_segment
+    {
+        $$ = $1;
+    }
     ;
 
 lead_data_segments
-    : 
-    %empty                                      {   $$ = 0;                         }   
-    |   lead_data_segment                       {   $$ = $1;                        }
+    :  
+    lead_data_segment                       {   $$ = $1;                        }
     |   lead_data_segments lead_data_segment    {   $$ = $1; $$ <<= 4; $$ += $2;    }
     ;
 

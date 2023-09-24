@@ -27,7 +27,7 @@ scanner.cpp: scanner.l scanner.internal.hpp parser.hpp parser.cpp
 	$(LEX) $<
 
 parser.hpp parser.cpp: parser.y
-	$(YACC) $^
+	$(YACC) -v $^
 
 .PHONY: clean
 
