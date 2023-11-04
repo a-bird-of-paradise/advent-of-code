@@ -1,0 +1,5 @@
+aoc
+*.txt
+scanner.cpp
+parser.hpp
+parser.cpp
