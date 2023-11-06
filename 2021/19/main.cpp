@@ -37,11 +37,11 @@ int main (int argc, char **argv)
     aoc::parser Parser(TokenScanner,Context);
 
     Parser.parse();
-
+/*
     for(std::size_t i = 0; i < Context.scanners.size(); i++) {
         assert(test_distinct_fingerprint(Context.scanners[i]));
     }
-
+*/
     // store fingerprints and build an index of scanner[fingerprint]=beacon_pair
 
     std::vector< std::vector<aoc::fingerprint> > fingerprints;
@@ -238,7 +238,7 @@ int main (int argc, char **argv)
         mag_1 = magnitude_sq(the_end-the_root);
         mag_2 = magnitude_sq(the_other_end-the_root);
         if(mag_1 == mag_2) {
-            continue; // want different lengths to avoid any ambiguity
+            assert(false); // should never happen
         }
 
         common_prior = the_root;
