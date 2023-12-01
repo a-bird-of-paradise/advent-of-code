@@ -3,7 +3,7 @@
 #include "scanner.hpp"
 #include "funcs.hpp"
 
-int main (int argc, char **argv)
+auto main() -> int
 {
     aoc::scanner TokenScanner(std::cin, std::cout);
     aoc::context Context;
