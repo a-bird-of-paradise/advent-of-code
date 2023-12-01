@@ -91,6 +91,8 @@ line
         for(auto&& i : digits)
             if(i == std::string::npos)
                 i = 0;
+            else
+                i += 1;
 
         last_1 = std::distance(
             std::begin(digits), 
@@ -109,6 +111,8 @@ line
         for(auto&& i : characters)
             if(i == std::string::npos)
                 i = 0;
+            else
+                i += 1;
 
         if(*std::max_element(std::begin(digits),std::end(digits))
             > *std::max_element(std::begin(characters),std::end(characters)))
@@ -123,8 +127,6 @@ line
 
         Context.answer_1 += 10*first_1 + last_1;
         Context.answer_2 += 10*first_2 + last_2;
-
-        std::cout << first_1 << ' ' << last_1 << ' ' << first_2 << ' ' << last_2 << '\n';
 
     }
     ;
