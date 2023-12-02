@@ -8,7 +8,7 @@
 %define api.namespace {aoc}
 %define api.parser.class {parser}
 %define api.token.constructor
-//%define api.value.automove
+%define api.value.automove
 %define api.value.type variant
 %define parse.assert
 %define parse.error detailed
@@ -28,7 +28,7 @@ namespace aoc { class scanner; }
 }
 
 %token ENDL GAME RED BLUE GREEN COMMA COLON SEMICOLON
-%token <int> NUMBER
+%token <long> NUMBER
 
 %nterm file
 
@@ -36,8 +36,8 @@ namespace aoc { class scanner; }
 %type <aoc::turn_t> turn_inner
 %type <std::vector<aoc::turn_t>> turn
 %type <aoc::turnlist_t> turnlist
-%type <std::pair<int,aoc::turnlist_t>> line line_inner
-%type <std::vector<std::pair<int,aoc::turnlist_t>>> lines
+%type <std::pair<long,aoc::turnlist_t>> line line_inner
+%type <std::vector<std::pair<long,aoc::turnlist_t>>> lines
 
 %start file
 
@@ -77,6 +77,10 @@ line_inner
     GAME NUMBER COLON turnlist
     {
         $$ = std::make_pair($2,$4);
+    }
+    |   GAME NUMBER COLON
+    {
+        $$.first = $2;
     }
     ;
 

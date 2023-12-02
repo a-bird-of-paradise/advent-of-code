@@ -15,6 +15,6 @@ namespace aoc
     public:
         context() { loc.initialize(); }
         location loc;
-        std::vector<std::pair<int,turnlist_t>> file;
+        std::vector<std::pair<long,turnlist_t>> file;
     };
 }

@@ -11,15 +11,15 @@ auto main() -> int
 
     Parser.parse();
 
-    uint32_t answer_1 = 0, answer_2 = 0;
-    uint32_t least_red, least_green, least_blue;
+    uint64_t answer_1 = 0, answer_2 = 0;
+    uint64_t least_red, least_green, least_blue;
     bool can_win;
 
     for(const auto& games : Context.file) {
 
         can_win = true;
         least_red = least_blue = least_green = 0;
-        
+
         for(const auto& plays : games.second) {
             for(const auto& turn : plays) {
                 switch(turn.first){
