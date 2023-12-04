@@ -46,17 +46,12 @@ file
         {
             // store original
             Context.win_pile[i+1] += 1;
-
+            
+            // add succeeding winners per copy 
             long k = Context.win_pile[i+1];
 
-            while(k>0)
-            {
-                // add succeeding winners per copy 
-
-                for(std::size_t j = 0; j < Context.winners[i]; j++) {
-                    Context.win_pile[i+1 + j+1]++;
-                }
-                k--;
+            for(std::size_t j = 0; j < Context.winners[i]; j++) {
+                Context.win_pile[i+1 + j+1]+= k;
             }
         }
 
