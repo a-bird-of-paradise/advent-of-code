@@ -3,6 +3,7 @@
 #include "scanner.hpp"
 #include "funcs.hpp"
 #include <algorithm>
+#include <boost/icl/interval_set.hpp>
 
 auto main() -> int
 {
@@ -26,30 +27,30 @@ auto main() -> int
 
     std::cout << *std::ranges::min_element(location) << '\n';
 
-    // part 2, just use brute force
-
+    // part 2, just use boost 
+    
     std::vector<aoc::segment> segments;
 
     for(std::size_t i = 0; i < Context.seeds.size(); i += 2)
         segments.emplace_back(Context.seeds[i],Context.seeds[i+1]);
 
-    long long min_seen = INT64_MAX, temp;
+    boost::icl::interval_set<int64_t> initial_seeds, temp;
 
-    for(const auto& s : segments){
-        for(long long i = 0; i < s.second; i++) {
-            temp = apply_map_single(s.first+i,Context.seed_to_soil);
-            temp = apply_map_single(temp,Context.soil_to_fertiliser);
-            temp = apply_map_single(temp,Context.fertiliser_to_water);
-            temp = apply_map_single(temp,Context.water_to_light);
-            temp = apply_map_single(temp,Context.light_to_temperature);
-            temp = apply_map_single(temp,Context.temperature_to_humidity);
-            temp = apply_map_single(temp,Context.humidity_to_location);
-
-            min_seen = temp < min_seen ? temp : min_seen;
-        }
+    for(const auto& segment : segments)
+    {
+        boost::icl::discrete_interval<int64_t> x(segment.first,segment.first+segment.second);
+        initial_seeds.add(x);
     }
+    
+    temp = apply_map_set(initial_seeds,Context.seed_to_soil);
+    temp = apply_map_set(temp,Context.soil_to_fertiliser);
+    temp = apply_map_set(temp,Context.fertiliser_to_water);
+    temp = apply_map_set(temp,Context.water_to_light);
+    temp = apply_map_set(temp,Context.light_to_temperature);
+    temp = apply_map_set(temp,Context.temperature_to_humidity);
+    temp = apply_map_set(temp,Context.humidity_to_location);
 
-    std::cout << min_seen << '\n';
+    std::cout << temp.begin()->lower() << '\n';
 
     return 0;
 
