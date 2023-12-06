@@ -22,7 +22,7 @@ aoc: $(OBJS)
 scanner.cpp: scanner.l scanner.internal.hpp parser.hpp parser.cpp
 	$(LEX) $<
 
-parser.hpp parser.cpp: parser.y
+parser.hpp parser.cpp: parser.y context.hpp
 	$(YACC) -v $^
 
 .PHONY: clean
