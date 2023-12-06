@@ -15,9 +15,6 @@ Distance    |
 ":"         |
 " "+        {   }
 
-\n      {   Context.loc.lines();
-            return aoc::parser::make_ENDL(Context.loc);     }
-
-.       {   return aoc::parser::make_YYUNDEF(Context.loc);  }
-
-<<EOF>>         {   return aoc::parser::make_YYEOF(Context.loc);    }
+\n      {   Context.loc.lines();    return aoc::parser::make_ENDL(Context.loc);     }
+.       {   return aoc::parser::make_YYUNDEF(Context.loc);                          }
+<<EOF>> {   return aoc::parser::make_YYEOF(Context.loc);                            }

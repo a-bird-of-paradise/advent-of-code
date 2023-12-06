@@ -12,7 +12,9 @@ OBJS=$(SOURCES:.cpp=.o)
 
 answer: aoc testinput.txt input.txt 
 	./aoc < testinput.txt
+	sed 's/ //g' < testinput.txt | ./aoc 
 	./aoc < input.txt
+	sed 's/ //g' < input.txt | ./aoc 
 
 aoc: $(OBJS)
 	$(CXX) $(CXXFLAGS) $(LIBS) $(LDFLAGS) $^ -o $@
