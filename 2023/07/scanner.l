@@ -9,7 +9,7 @@
 
 %%
 [0-9TJQKA]{5}   {   return aoc::parser::make_HAND(YYText(),Context.loc);            }
-[0-9]+          {   return aoc::parser::make_NUMBER(atoi(YYText()),Context.loc);    }
+" "[0-9]+       {   return aoc::parser::make_NUMBER(atoll(YYText()+1),Context.loc); }
 
 " "         {   }
 

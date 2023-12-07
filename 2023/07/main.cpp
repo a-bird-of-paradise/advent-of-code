@@ -32,7 +32,7 @@ auto main() -> int
     });
 
     uint64_t answer_1 = 0;
-    for(std::size_t i = 0; i < Context.lines.size(); i++) answer_1 += (i+1) * Context.lines[i].second;
+    for(uint64_t i = 0; i < Context.lines.size(); i++) answer_1 += (i+1) * Context.lines[i].second;
     std::cout << answer_1 << '\n';
 
     // part 2
@@ -55,7 +55,7 @@ auto main() -> int
     });
 
     uint64_t answer_2 = 0;
-    for(std::size_t i = 0; i < Context.lines.size(); i++) answer_2 += (i+1) * Context.lines[i].second;
+    for(uint64_t i = 0; i < Context.lines.size(); i++) answer_2 += (i+1) * Context.lines[i].second;
     std::cout << answer_2 << '\n';
 
     return 0;

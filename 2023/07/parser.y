@@ -28,7 +28,7 @@ namespace aoc { class scanner; }
 #define yylex Scanner.lex
 }
 
-%token <int16_t> NUMBER
+%token <uint64_t> NUMBER
 %token ENDL
 %token <std::string> HAND
 

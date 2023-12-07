@@ -90,6 +90,8 @@ auto compare_cards_2(char l, char r) -> bool
 
 auto string_to_hand_type_2(std::string const& s) -> aoc::hand_type
 {
+    if(std::find(s.begin(),s.end(),'J') == s.end()) return string_to_hand_type(s);
+
     std::string no_j = s;
 
     no_j.erase(std::remove(no_j.begin(),no_j.end(),'J'),no_j.end());

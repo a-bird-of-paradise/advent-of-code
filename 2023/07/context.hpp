@@ -19,6 +19,6 @@ namespace aoc
     public:
         context() { loc.initialize(); }
         location loc;
-        std::vector<std::pair<std::string,int16_t>> lines;
+        std::vector<std::pair<std::string,uint64_t>> lines;
     };
 }
