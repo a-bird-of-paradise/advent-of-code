@@ -10,7 +10,6 @@ void aoc::parser::error(aoc::location const& loc, std::string const& msg)
     std::cerr << loc << ": " << msg << std::endl;
 }
 
-
 auto string_to_hand_type(std::string const& s) -> aoc::hand_type
 {
     int count[14] = {0};
@@ -88,6 +87,8 @@ auto compare_cards_2(char l, char r) -> bool
     return card_to_number_2(l) < card_to_number_2(r);
 }
 
+const char cards[] = {'1','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
+
 auto string_to_hand_type_2(std::string const& s) -> aoc::hand_type
 {
     if(std::find(s.begin(),s.end(),'J') == s.end()) return string_to_hand_type(s);
@@ -96,19 +97,16 @@ auto string_to_hand_type_2(std::string const& s) -> aoc::hand_type
 
     no_j.erase(std::remove(no_j.begin(),no_j.end(),'J'),no_j.end());
 
-    char cards[] = {'1','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
+    char seen[14] = {0};
 
-    std::map<char,int> seen;
-
-    for(auto const& x : cards) { seen[x] = 0; }
-    for(auto const& x : no_j) { seen[x]++; }
+    for(auto const& x : no_j) { seen[card_to_number(x)-1]++; }
 
     int max_seen_count = 0;
     char max_seen = '1';
 
     for(auto const& x : cards) 
-        if(seen[x] > max_seen_count) {
-            max_seen_count = seen[x];
+        if(seen[card_to_number(x)-1] > max_seen_count) {
+            max_seen_count = seen[card_to_number(x)-1];
             max_seen = x;
         }
 
