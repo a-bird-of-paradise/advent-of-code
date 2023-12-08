@@ -10,8 +10,10 @@ OBJS=$(SOURCES:.cpp=.o)
 
 .PHONY: answer
 
-answer: aoc testinput.txt input.txt 
+answer: aoc testinput.txt input.txt testinput2.txt testinput3.txt
 	./aoc < testinput.txt
+	./aoc < testinput2.txt
+	./aoc < testinput3.txt
 	./aoc < input.txt
 
 aoc: $(OBJS)

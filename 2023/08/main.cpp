@@ -2,6 +2,7 @@
 #include "context.hpp"
 #include "scanner.hpp"
 #include "funcs.hpp"
+#include <numeric>
 #include <algorithm>
 
 auto main() -> int
@@ -14,50 +15,71 @@ auto main() -> int
 
     // part 1
 
-    std::sort(Context.lines.begin(), Context.lines.end(),
-    [](auto& l, auto& r)
-    {
-        aoc::hand_type left = string_to_hand_type(l.first);
-        aoc::hand_type right = string_to_hand_type(r.first);
+    std::string current = "AAA";
+    std::string::const_iterator lr_it = Context.lr.begin();
+    uint64_t counter = 0;
 
-        if(left == right)
-        {
-            if(l.first[0] != r.first[0]) return compare_cards(l.first[0],r.first[0]);
-            if(l.first[1] != r.first[1]) return compare_cards(l.first[1],r.first[1]);
-            if(l.first[2] != r.first[2]) return compare_cards(l.first[2],r.first[2]);
-            if(l.first[3] != r.first[3]) return compare_cards(l.first[3],r.first[3]);
-            return compare_cards(l.first[4],r.first[4]);
+    while(current != "ZZZ"){
+        counter++;
+
+        if(*lr_it == 'L') {
+            current = Context.nodes[current].first;
+        } else if (*lr_it == 'R') {
+            current = Context.nodes[current].second;
         }
-        return left < right;
-    });
 
-    uint64_t answer_1 = 0;
-    for(std::size_t i = 0; i < Context.lines.size(); i++) answer_1 += (i+1) * Context.lines[i].second;
-    std::cout << answer_1 << '\n';
+        lr_it++;
+        if(lr_it == Context.lr.end()) lr_it = Context.lr.begin();
+    }
+
+    std::cout << counter << '\n';
 
     // part 2
 
-    std::sort(Context.lines.begin(), Context.lines.end(),
-    [](auto& l, auto& r)
-    {
-        aoc::hand_type left = string_to_hand_type_2(l.first);
-        aoc::hand_type right = string_to_hand_type_2(r.first);
+    std::vector<std::string> current_nodes;
 
-        if(left == right)
-        {
-            if(l.first[0] != r.first[0]) return compare_cards_2(l.first[0],r.first[0]);
-            if(l.first[1] != r.first[1]) return compare_cards_2(l.first[1],r.first[1]);
-            if(l.first[2] != r.first[2]) return compare_cards_2(l.first[2],r.first[2]);
-            if(l.first[3] != r.first[3]) return compare_cards_2(l.first[3],r.first[3]);
-            return compare_cards_2(l.first[4],r.first[4]);
+    for(const auto& n : Context.nodes)
+        if(n.first[2]=='A')
+            current_nodes.push_back(n.first);
+
+    std::vector<uint64_t> cycle_lengths;
+    for(const auto & n : current_nodes) cycle_lengths.push_back(0);
+    
+    lr_it = Context.lr.begin();
+    counter = 0;
+
+    bool done = false;
+
+    while(!done) {
+        counter++;
+
+        if(*lr_it == 'L') {
+            for(auto&& n : current_nodes) {
+                n = Context.nodes[n].first;
+            }
+        } else if (*lr_it == 'R') {
+            for(auto&& n : current_nodes) {
+                n = Context.nodes[n].second;
+            }
         }
-        return left < right;
-    });
 
-    uint64_t answer_2 = 0;
-    for(std::size_t i = 0; i < Context.lines.size(); i++) answer_2 += (i+1) * Context.lines[i].second;
-    std::cout << answer_2 << '\n';
+        done = true; 
+
+        for(std::size_t i = 0; i < current_nodes.size(); ++i) {
+            if(current_nodes[i][2] == 'Z' && cycle_lengths[i] == 0)
+                cycle_lengths[i] = counter;
+            
+            if(cycle_lengths[i] == 0) done = false;
+        }
+
+        lr_it++;
+        if(lr_it == Context.lr.end()) lr_it = Context.lr.begin();
+    }
+
+    uint64_t answer = 1;
+    for(const auto& c: cycle_lengths) answer = std::lcm(answer,c);
+
+    std::cout << answer << '\n';
 
     return 0;
-
 }

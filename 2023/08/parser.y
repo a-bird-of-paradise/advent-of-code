@@ -8,7 +8,7 @@
 %define api.namespace {aoc}
 %define api.parser.class {parser}
 %define api.token.constructor
-%define api.value.automove
+//%define api.value.automove
 %define api.value.type variant
 %define parse.assert
 %define parse.error detailed
@@ -28,9 +28,9 @@ namespace aoc { class scanner; }
 #define yylex Scanner.lex
 }
 
-%token <int16_t> NUMBER
-%token ENDL
-%token <std::string> HAND
+%token EQUALS LPAREN RPAREN COMMA ENDL
+
+%token <std::string> LR NODE
 
 %nterm file line lines
 %start file
@@ -39,7 +39,10 @@ namespace aoc { class scanner; }
 
 file
     :
-    lines
+    LR ENDL ENDL lines
+    {
+        Context.lr = std::move($1);
+    }
     ;
 
 lines
@@ -50,8 +53,8 @@ lines
 
 line
     :
-    HAND NUMBER ENDL
+    NODE EQUALS LPAREN NODE COMMA NODE RPAREN ENDL
     {
-        Context.lines.emplace_back($1,$2);
+        Context.nodes[$1] = std::make_pair($4,$6);
     }
     ;

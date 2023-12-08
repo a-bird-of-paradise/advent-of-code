@@ -6,13 +6,22 @@
 %}
 
 %option c++ noyywrap outfile="scanner.cpp" batch yyclass="aoc::scanner" prefix="aoc" 8bit
-
+%x NODES
 %%
-[0-9TJQKA]{5}   {   return aoc::parser::make_HAND(YYText(),Context.loc);            }
-[0-9]+          {   return aoc::parser::make_NUMBER(atoi(YYText()),Context.loc);    }
+[LR]+       {   BEGIN NODES;
+                return aoc::parser::make_LR(YYText(),Context.loc);  }    
+<<EOF>>     {   return aoc::parser::make_YYEOF(Context.loc);        }  
 
-" "         {   }
+<NODES>{
+[A-Z0-9]{3} {   return aoc::parser::make_NODE(YYText(),Context.loc);    }
+
+"="     {   return aoc::parser::make_EQUALS(Context.loc);   }
+"("     {   return aoc::parser::make_LPAREN(Context.loc);   }
+")"     {   return aoc::parser::make_RPAREN(Context.loc);   }
+","     {   return aoc::parser::make_COMMA(Context.loc);    }
+" "     {   }
 
 \n      {   Context.loc.lines();    return aoc::parser::make_ENDL(Context.loc);     }
 .       {   return aoc::parser::make_YYUNDEF(Context.loc);                          }
 <<EOF>> {   return aoc::parser::make_YYEOF(Context.loc);                            }
+}
