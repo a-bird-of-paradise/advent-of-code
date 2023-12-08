@@ -10,10 +10,10 @@ void aoc::parser::error(aoc::location const& loc, std::string const& msg)
     std::cerr << loc << ": " << msg << std::endl;
 }
 
+
 auto string_to_hand_type(std::string const& s) -> aoc::hand_type
 {
-    int count[14];
-    std::ranges::fill(count,0);
+    int count[14] = {0};
 
     for(const auto& c : s)
     {
@@ -44,12 +44,12 @@ auto string_to_hand_type(std::string const& s) -> aoc::hand_type
     }
 
     if(five == 1) return aoc::hand_type::five_of_a_kind;
-    else if(four == 1) return aoc::hand_type::four_of_a_kind;
-    else if(two == 1 && one == 3) return aoc::hand_type::one_pair;
-    else if(two == 2 && one == 1) return aoc::hand_type::two_pair;
-    else if(three == 1 && two == 1) return aoc::hand_type::full_house;
-    else if(three == 1 && one == 2) return aoc::hand_type::three_of_a_kind;
-    else return aoc::hand_type::high_card;
+    if(four == 1) return aoc::hand_type::four_of_a_kind;
+    if(two == 1 && one == 3) return aoc::hand_type::one_pair;
+    if(two == 2 && one == 1) return aoc::hand_type::two_pair;
+    if(three == 1 && two == 1) return aoc::hand_type::full_house;
+    if(three == 1 && one == 2) return aoc::hand_type::three_of_a_kind;
+    return aoc::hand_type::high_card;
 
     assert(false);
 }
@@ -57,11 +57,11 @@ auto string_to_hand_type(std::string const& s) -> aoc::hand_type
 auto card_to_number(char card) -> int16_t
 {
     if(card >= '1' && card <= '9') return card - '0';
-    else if(card == 'T') return 10;
-    else if(card == 'J') return 11;
-    else if(card == 'Q') return 12;
-    else if(card == 'K') return 13;
-    else if(card == 'A') return 14;
+    if(card == 'T') return 10;
+    if(card == 'J') return 11;
+    if(card == 'Q') return 12;
+    if(card == 'K') return 13;
+    if(card == 'A') return 14;
 
     assert(false);
 }
@@ -88,34 +88,31 @@ auto compare_cards_2(char l, char r) -> bool
     return card_to_number_2(l) < card_to_number_2(r);
 }
 
-static const char cards[] = {'1','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
-
 auto string_to_hand_type_2(std::string const& s) -> aoc::hand_type
 {
-    if(std::find(s.begin(),s.end(),'J') == s.end()) return string_to_hand_type(s);
-
     std::string no_j = s;
 
     no_j.erase(std::remove(no_j.begin(),no_j.end(),'J'),no_j.end());
 
-    int seen[14];
-    std::ranges::fill(seen,0);
+    char cards[] = {'1','2','3','4','5','6','7','8','9','T','J','Q','K','A'};
 
-    for(auto const& x : no_j) { seen[card_to_number(x)-1]++; }
+    std::map<char,int> seen;
+
+    for(auto const& x : cards) { seen[x] = 0; }
+    for(auto const& x : no_j) { seen[x]++; }
 
     int max_seen_count = 0;
     char max_seen = '1';
 
-    for(auto const& x : cards) {
-        int seen_ = seen[card_to_number(x)-1];
-        if(seen_> max_seen_count) {
-            max_seen_count = seen_;
+    for(auto const& x : cards) 
+        if(seen[x] > max_seen_count) {
+            max_seen_count = seen[x];
             max_seen = x;
         }
-    }
 
-    for(std::size_t i = no_j.size(); i < 5; i++) no_j.push_back(max_seen);
+    std::string augmented = no_j;
+    for(std::size_t i = no_j.size(); i < 5; i++) augmented.push_back(max_seen);
 
-    return string_to_hand_type(no_j);
+    return string_to_hand_type(augmented);
 
 }

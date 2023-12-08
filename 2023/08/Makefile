@@ -2,7 +2,6 @@ INCLUDE=-I/usr/local/opt/flex/include/ -I/usr/local/opt/llvm/include
 LDFLAGS=-L/usr/local/opt/llvm/lib -L/usr/local/opt/llvm/lib/c++ -Wl,-rpath,/usr/local/opt/llvm/lib/c++
 DBGFLAGS=-fsanitize=address -g -fsanitize=leak 
 FASTFLAGS=-Ofast -flto=full
-PROFFLAGS=-g -fprofile-instr-generate -fcoverage-mapping
 CXXFLAGS=$(INCLUDE) $(FASTFLAGS) -std=c++2b
 LIBS=
 
