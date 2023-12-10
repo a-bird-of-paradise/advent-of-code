@@ -155,7 +155,7 @@ auto main() -> int
                 answer_2++;
             if(graph.find(aoc::point(x,y)) != graph.end()){
                 char pipe = Context.pipes[aoc::point(x,y)];
-                if(pipe == '|') {
+                if(pipe == '|' || pipe == 'S') { // S is hard coded and not general
                     crossings++;
                     state = 0;
                 } else if (pipe == 'F') {
@@ -179,103 +179,6 @@ auto main() -> int
     }
 
     std::cout << answer_2 << '\n';
-
-    max_dim += 2;
-
-    std::vector<std::vector<char>> chart(max_dim * 3);
-    for(auto&& v : chart) v.resize(max_dim * 3);
-
-    for(auto && ch : chart) for(auto && c : ch) c = '.';
-
-    for(const auto & g : graph)
-    {
-        char current = Context.pipes[g.first];
-        std::size_t x_raw = g.first.x;
-        std::size_t y_raw = g.first.y;
-
-        switch(current)
-        {
-            case '-':
-                chart[x_raw*3 + 0][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 2][y_raw*3 + 1] = '#';
-                break;
-            case '|':
-                chart[x_raw*3 + 1][y_raw*3 + 0] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 2] = '#';
-                break;
-            case '7':
-                chart[x_raw*3 + 0][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 2] = '#';
-                break;
-            case 'F':
-                chart[x_raw*3 + 2][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 2] = '#';
-                break;
-            case 'L':
-                chart[x_raw*3 + 2][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 0] = '#';
-                break;
-            case 'J':
-                chart[x_raw*3 + 0][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 1] = '#';
-                chart[x_raw*3 + 1][y_raw*3 + 0] = '#';
-                break;
-            case 'S':
-                for(int i = 0; i < 3; i++) for(int j = 0; j < 3; j++)
-                    chart[x_raw*3 +i][y_raw*3+j] = '#';
-                break;
-
-            default:
-        }
-    }
-
-    std::stack<aoc::point> to_flood;
-    to_flood.push(aoc::point(0,0));
-
-    while(!to_flood.empty())
-    {
-        aoc::point current = to_flood.top();
-        to_flood.pop();
-
-        std::size_t x = current.x, y = current.y;
-
-        chart[x][y] = ' ';
-
-        // up and down
-        if(y > 0 && y < 3 * max_dim) {
-            if(chart[x][y-1] == '.') to_flood.push(aoc::point(x,y-1));
-        }
-        if(y >= 0 && y < 3 * max_dim - 1) {
-            if(chart[x][y+1] == '.') to_flood.push(aoc::point(x,y+1));
-        }
-
-        // left and right
-        if(x > 0 && x < 3 * max_dim) {
-            if(chart[x-1][y] == '.') to_flood.push(aoc::point(x-1,y));
-        }
-        if(x >= 0 && x < 3 * max_dim-1) {
-            if(chart[x+1][y] == '.') to_flood.push(aoc::point(x+1,y));
-        }
-    }
-
-    long counter = 0;
-
-    for(std::size_t i = 1; i < max_dim * 3; i+=3)
-    {
-        for(std::size_t j = 1; j < max_dim * 3; j+=3)
-        {
-            if(chart[i][j] == '.') {
-                counter++;
-                chart[i][j] = 'X';
-            }
-        }
-    }
-    std::cout << counter << '\n';
 
     return 0;
 }
