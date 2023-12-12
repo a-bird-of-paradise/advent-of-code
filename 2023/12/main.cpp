@@ -2,7 +2,6 @@
 #include "context.hpp"
 #include "scanner.hpp"
 #include "funcs.hpp"
-#include <ranges>
 
 auto main() -> int
 {
@@ -16,25 +15,43 @@ auto main() -> int
 
     int64_t answer_1 = 0;
 
-    for(std::size_t i = 0; i < Context.field.size(); ++i)
-    {
-        std::cout << "::" << i << '\n';
-
-        std::set<std::vector<char>> candidates;
-
-        for(const auto & c : Context.field[i]) std::cout << c;
-        std::cout << '\n';
-
-        generate_candidates(Context.field[i],0,candidates);
-
-        for(const auto& candidate : candidates){
-            if(is_valid_candidate(candidate,Context.contiguous[i])) {
-                answer_1++;
-            }
-        }
+    for(std::size_t i = 0; i < Context.field.size(); ++i) {
+        std::string x;
+        x.insert(x.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+        answer_1 += recurse(x,Context.contiguous[i]);
     }
 
     std::cout << answer_1 << '\n';
+
+    // part 2
+
+    int64_t answer_2 = 0;
+
+    for(std::size_t i = 0; i < Context.field.size(); ++i)
+    {
+
+        std::string field; 
+        field.insert(field.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+        field.push_back('?');
+        field.insert(field.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+        field.push_back('?');
+        field.insert(field.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+        field.push_back('?');
+        field.insert(field.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+        field.push_back('?');
+        field.insert(field.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
+
+        std::vector<int64_t> report = Context.contiguous[i];
+        report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
+        report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
+        report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
+        report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
+
+        answer_2 += recurse(field,report);
+
+    }
+
+    std::cout << answer_2 << '\n';
 
     return 0;
 }
