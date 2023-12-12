@@ -18,7 +18,13 @@ auto main() -> int
     for(std::size_t i = 0; i < Context.field.size(); ++i) {
         std::string x;
         x.insert(x.end(),std::begin(Context.field[i]),std::end(Context.field[i]));
-        answer_1 += recurse(x,Context.contiguous[i]);
+        //answer_1 += recurse(x,Context.contiguous[i]);
+        answer_1 += recurse2(
+            std::begin(x),
+            std::end(x),
+            std::begin(Context.contiguous[i]),
+            std::end(Context.contiguous[i])
+        );
     }
 
     std::cout << answer_1 << '\n';
@@ -47,7 +53,13 @@ auto main() -> int
         report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
         report.insert(report.end(),std::begin(Context.contiguous[i]),std::end(Context.contiguous[i]));
 
-        answer_2 += recurse(field,report);
+        //answer_2 += recurse(field,report);
+        answer_2 += recurse2(
+            std::begin(field),
+            std::end(field),
+            std::begin(report),
+            std::end(report)
+        );
 
     }
 

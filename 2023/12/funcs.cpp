@@ -140,8 +140,13 @@ auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -
     // operates on "tails"
     // base case - no more springs
 
+    std::cout << candidate;
+    for(const auto& u : unused) std::cout << " | " << u;
+    std::cout << std::endl;
+
     if(unused.size() == 0) {
         if(candidate.contains('#') == false) {
+            std::cout << "!\n";
             return 1;
         } else {
             return 0;
@@ -158,6 +163,7 @@ auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -
 
     std::string key = candidate;
     for(const auto & u : unused) key += "_" + std::to_string(u);
+    std::cout << key << '\n';
 
     auto lookup = cache.find(key);
 
@@ -173,12 +179,12 @@ auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -
     std::regex candidate_regex(candidate_pattern);
     std::smatch candidate_results;
 
-    std::string leading_hashes_pattern = "^\\.*#+";
-    std::regex hashes_regex(leading_hashes_pattern);
+    static std::string leading_hashes_pattern = "^\\.*#+";
+    static std::regex hashes_regex(leading_hashes_pattern);
     std::smatch hashes_results;
 
-    std::string leading_question_pattern = "^\\.*\\?";
-    std::regex question_regex(leading_question_pattern);
+    static std::string leading_question_pattern = "^\\.*\\?";
+    static std::regex question_regex(leading_question_pattern);
     std::smatch question_results;
 
     bool matched = std::regex_search(candidate,candidate_results,candidate_regex);
@@ -193,6 +199,7 @@ auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -
         if(matched_hash) {
             return 0;
         } else if(matched_q) {
+            std::cout << "a\n";
             return recurse(candidate.substr(question_results[0].str().size()),unused);
         } else {
             assert(false);
@@ -210,10 +217,117 @@ auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -
         auto y_end = std::end(unused);
 
         std::vector<int64_t> y(y_begin,y_end);
+            std::cout << "b\n";
         use_result = recurse(x,y);
 
         if(matched_q) {
+            std::cout << "c\n";
             unused_result = recurse(candidate.substr(question_results[0].str().size()), unused);
+        } else /* matched_hash */ {
+            // do nothing
+        }
+
+        cache[key] = use_result + unused_result;
+
+        return use_result + unused_result;
+    }
+}
+auto recurse2(
+    const std::string::const_iterator& candidate_begin, 
+    const std::string::const_iterator& candidate_end, 
+    const std::vector<int64_t>::const_iterator& unused_begin,
+    const std::vector<int64_t>::const_iterator& unused_end
+) -> int64_t
+{
+    static std::unordered_map<std::string,int64_t> cache;
+
+    // operates on "tails"
+    // base case - no more springs
+
+    if(unused_begin == unused_end) {
+        if(std::find(candidate_begin,candidate_end,'#') == candidate_end) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    // unused.size >= 1... ran out of room?
+    if(candidate_begin == candidate_end) {
+        return 0;
+    }
+    // no more space?
+    if(std::find(candidate_begin,candidate_end,'#') == candidate_end
+        && std::find(candidate_begin,candidate_end,'?') == candidate_end) {
+        return 0;
+    }
+
+    std::string key(candidate_begin,candidate_end);
+    for(auto it = unused_begin; it != unused_end; ++it) 
+        key += "_" + std::to_string(*it);
+
+    auto lookup = cache.find(key);
+
+    if(lookup != cache.end()) return lookup->second;
+
+    // ok, find first possible match
+    // want to find string of #? of length n, that is not followed by a #
+    // so slurp up initital dots...
+
+    std::string candidate_pattern = "^\\.*[#\\?]{";
+    candidate_pattern += std::to_string(*unused_begin);
+    candidate_pattern += "}(?!#)"; // and negative lookahead
+    std::regex candidate_regex(candidate_pattern);
+    std::smatch candidate_results;
+
+    static std::string leading_hashes_pattern = "^\\.*#+";
+    static std::regex hashes_regex(leading_hashes_pattern);
+    std::smatch hashes_results;
+
+    static std::string leading_question_pattern = "^\\.*\\?";
+    static std::regex question_regex(leading_question_pattern);
+    std::smatch question_results;
+
+    bool matched = std::regex_search(candidate_begin,candidate_end,candidate_results,candidate_regex);
+    bool matched_hash = std::regex_search(candidate_begin,candidate_end,hashes_results,hashes_regex);
+    bool matched_q = std::regex_search(candidate_begin,candidate_end,question_results,question_regex);
+
+    // if not matched
+    // if matched_hash then fail
+    // if matched_q then consume and retry
+
+    if(!matched) {
+        if(matched_hash) {
+            return 0;
+        } else if(matched_q) {
+            return recurse2(
+                std::next(candidate_begin,question_results[0].str().size()),
+                candidate_end,
+                unused_begin,
+                unused_end);
+        } else {
+            assert(false);
+        }
+    } else /* matched */ {
+        int64_t use_result = 0, unused_result = 0;
+
+        std::string::const_iterator x;
+
+        if(candidate_results[0].str().size() < std::distance(candidate_begin,candidate_end)){
+            x = std::next(candidate_begin,candidate_results[0].str().size() +1 );
+        } else {
+            x = candidate_end;
+        }
+        std::vector<int64_t>::const_iterator y_begin = std::next(unused_begin);
+
+        use_result = recurse2(x,candidate_end,y_begin,unused_end);
+
+        if(matched_q) {
+            unused_result = recurse2(
+                std::next(candidate_begin,question_results[0].str().size()), 
+                candidate_end,
+                unused_begin,
+                unused_end
+            );
         } else /* matched_hash */ {
             // do nothing
         }

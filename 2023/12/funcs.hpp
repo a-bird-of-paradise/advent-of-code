@@ -20,3 +20,10 @@ auto is_definitely_invalid(
 auto get_report(const std::vector<char>& candidate) -> const std::vector<int64_t>;
 
 auto recurse(const std::string& candidate, const std::vector<int64_t>& unused) -> int64_t;
+
+auto recurse2(
+    const std::string::const_iterator& candidate_begin, 
+    const std::string::const_iterator& candidate_end, 
+    const std::vector<int64_t>::const_iterator& unused_begin,
+    const std::vector<int64_t>::const_iterator& unused_end
+) -> int64_t;
