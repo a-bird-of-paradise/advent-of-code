@@ -31,47 +31,30 @@ namespace aoc { class scanner; }
 %token <std::string> CHARS
 %token ENDL
 
-%nterm file notes
+%nterm file lines
 
 %type <std::string> line
-%type <aoc::note> note
 %start file
 
 %%
 
 file
     :
-    notes
+    lines
     ;
 
-notes
+lines
     :
-    note ENDL
+    lines line
     {
-        Context.notes.push_back($1);
+        Context.lines.push_back($2);
     }
-    |   notes note ENDL
+    | line
     {
-        Context.notes.push_back($2);
-    }
-    |   notes note YYEOF
-    {
-        Context.notes.push_back($2);
+        Context.lines.push_back($1);
     }
     ;
 
-note
-    :
-    note line
-    {
-        $$ = $1;
-        $$.push_back($2);
-    }
-    |   line
-    {
-        $$.push_back($1);
-    }
-    ;
 
 line
     :

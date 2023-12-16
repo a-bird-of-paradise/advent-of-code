@@ -11,9 +11,11 @@ auto main() -> int
 
     Parser.parse();
 
-    int64_t answer_1 = 0, answer_2 = 0;
+    int64_t answer_1 = 0, answer_2 = 0, counter = 0;
 
     for(const auto & note : Context.notes) {
+
+        std::cout << ++counter << '\n';
 
         bool part_1_is_H=false, part_2_found  = false;
         std::size_t part_1_index;
