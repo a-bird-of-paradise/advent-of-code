@@ -8,7 +8,12 @@
 %option c++ noyywrap outfile="scanner.cpp" batch yyclass="aoc::scanner" prefix="aoc" 8bit
 
 %%
-[\.#O]+ {   return aoc::parser::make_CHARS(YYText(),Context.loc);       }
+[a-z]+  {   return aoc::parser::make_CHARS(YYText(),Context.loc);           }
+[0-9]+  {   return aoc::parser::make_NUMBER(atoi(YYText()),Context.loc);    }
+
+=       {   return aoc::parser::make_EQUALS(Context.loc);   }
+-       {   return aoc::parser::make_MINUS(Context.loc);    }      
+,       {   return aoc::parser::make_COMMA(Context.loc);    }
 
 \n      {   Context.loc.lines(); 
             return aoc::parser::make_ENDL(Context.loc);                 }
