@@ -37,8 +37,7 @@ namespace aoc { class scanner; }
 
 %%
 
-file
-    :
+file:
     lines
     ;
 
@@ -65,6 +64,7 @@ numbers
     |   numbers NUMBER
     {
         $$ = $1;
-        $$.push_back($2);
+        $$.push_back($2 );
     }
     ;
+    

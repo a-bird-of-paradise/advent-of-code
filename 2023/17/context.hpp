@@ -8,14 +8,13 @@ namespace aoc
     enum class direction { up, down, left, right };
 
     struct point { 
-        int32_t r, c; 
+        int64_t r, c; 
         auto operator<=>(const point&) const = default;
     };
 
     struct state {
         point p;
         direction dir;
-        int64_t steps;
         auto operator<=>(const state&) const = default;
     };
 
