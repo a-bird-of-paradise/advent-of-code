@@ -200,7 +200,6 @@ auto main() -> int
     }
 
     std::cout << answer_2 << '\n';
-    // 84019 too low
 
     return 0;
 }
