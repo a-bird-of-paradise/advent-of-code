@@ -5,7 +5,7 @@ FASTFLAGS=-Ofast -flto=full
 CXXFLAGS=$(INCLUDE) $(FASTFLAGS) -std=c++2b
 LIBS=
 
-SOURCES=scanner.cpp parser.cpp funcs.cpp main.cpp
+SOURCES=scanner.cpp parser.cpp funcs.cpp main.cpp state_dumper.cpp
 OBJS=$(SOURCES:.cpp=.o)
 
 .PHONY: answer
