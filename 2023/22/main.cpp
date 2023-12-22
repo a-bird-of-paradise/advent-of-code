@@ -176,9 +176,11 @@ auto main() -> int
 
     std::queue<int16_t> to_drop;
 
+    std::map<int,std::set<int>> is_supported_by_2 ;
+
     for(auto b = 1; b <= current_locs.size(); ++b)
     {
-        std::map<int,std::set<int>> is_supported_by_2 = is_supported_by;
+        is_supported_by_2 = is_supported_by;
 
         to_drop.push(b);
 
