@@ -1,6 +1,7 @@
 #include "funcs.hpp"
 #include "scanner.hpp"
 #include "context.hpp"
+#include <ranges>
 
 auto aoc::parser::error(aoc::location const& loc, std::string const& msg) -> void
 {
@@ -116,4 +117,93 @@ auto build_graph_2(const std::vector<std::string>& field) -> std::map<int64_t, s
     
     return graph;
 
+}
+
+auto dfs(
+    const std::map<int64_t, std::vector<int64_t>>& graph,
+    const int64_t goal,
+    const int64_t current,
+    std::vector<int64_t>& current_path,
+    std::vector<std::vector<int64_t>>& paths) -> void
+{
+    // we're here
+    current_path.push_back(current);
+
+    // at the end?
+    if(current == goal) {
+        paths.push_back(current_path);
+        current_path.pop_back();
+        return;
+    }
+
+    // try each neighbour 
+
+    for(const auto& n : graph.at(current))
+    {
+        if(std::ranges::find(current_path,n) == current_path.end()) {
+            dfs(graph,goal,n,current_path,paths);
+        }
+    }
+
+    current_path.pop_back();
+    return;
+}
+
+auto compact(
+    const std::map<int64_t, std::vector<int64_t>>& graph,
+    int64_t start,
+    int64_t end) -> std::map<int64_t, std::vector<std::pair<int64_t,int64_t>>>
+{
+    std::map<int64_t, std::vector<std::pair<int64_t,int64_t>>> answer;
+
+    std::vector<int64_t> intersections;
+
+    intersections.push_back(start);
+
+    for(const auto& g : graph) {
+        if(g.second.size() > 2) {
+            intersections.push_back(g.first);
+        }
+    }
+
+    intersections.push_back(end);
+
+    int64_t distance, previous, next, current;
+
+    bool dead_end;
+
+    for(const auto& i : intersections)
+    {
+        for(const auto & n : graph.at(i))
+        {
+            dead_end = false;
+            previous = i;
+            distance = 1;
+            current = n; 
+            // seek along path until we bump into an intersection 
+            
+            while(std::ranges::find(intersections,current) == intersections.end()) // so current always has 2 neihbours
+            {
+                if(graph.at(current).size() != 2) {
+                    dead_end = true;
+                    std::cout << i << ' ' << current << ' ' << '\n';
+                     break; 
+                }// ... except at dead ends
+
+                if(graph.at(current)[0] == previous) {
+                    next = graph.at(current)[1];
+                } else {
+                    next = graph.at(current)[0];
+                }
+
+                previous = current;
+                current = next; 
+                distance++;
+            }
+            
+            if(!dead_end) 
+                answer[i].push_back({current,distance});
+        }
+    }
+    return answer;
 }

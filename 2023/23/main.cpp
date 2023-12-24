@@ -5,42 +5,6 @@
 #include <ranges>
 #include <set>
 
-static int64_t max_seen = 0;
-
-auto dfs(
-    const std::map<int64_t, std::vector<int64_t>>& graph,
-    const int64_t goal,
-    const int64_t current,
-    std::set<int64_t>& current_path,
-    std::vector<std::set<int64_t>>& paths)
-{
-    // we're here
-    current_path.insert(current);
-
-    // at the end?
-    if(current == goal) {
-        paths.push_back(current_path);
-        current_path.erase(current);
-        if(current_path.size() > max_seen) {
-            max_seen = current_path.size();
-            std::cout << "!!! " << max_seen << '\n';
-        }
-        return;
-    }
-
-    // try each neighbour 
-
-    for(const auto& n : graph.at(current))
-    {
-        if(!current_path.contains(n)) {
-            dfs(graph,goal,n,current_path,paths);
-        }
-    }
-
-    current_path.erase(current);
-    return;
-}
-
 
 auto main() -> int
 {
@@ -53,8 +17,8 @@ auto main() -> int
     // part 1;
 
     std::map<int64_t, std::vector<int64_t>> graph = build_graph(Context.lines);
-    std::set<int64_t> current_path;
-    std::vector<std::set<int64_t>> paths;
+    std::vector<int64_t> current_path;
+    std::vector<std::vector<int64_t>> paths;
 
     int64_t start = get_index(1,0);
     int64_t end = get_index(Context.lines[0].size()-2, Context.lines.size()-1);
@@ -72,12 +36,34 @@ auto main() -> int
     current_path.clear();
     paths.clear();
     sizes.clear();
+    
+    std::map<int64_t, std::vector<std::pair<int64_t,int64_t>>> reduced = compact(graph,start,end);
 
-    dfs(graph,end,start,current_path,paths);
+    std::map<int64_t, std::vector<int64_t>> reduced_adjacency;
+    std::map<int64_t, std::map<int64_t,int64_t>> lengths;
 
-    for(const auto & p : paths) sizes.push_back(p.size()-1);
+    for(const auto & g : reduced) {
+        for(const auto & p : g.second) {
+            reduced_adjacency[g.first].push_back(p.first);
+            lengths[g.first][p.first]=p.second;
+        }
+    }
 
-    std::cout << *std::max_element(std::begin(sizes),std::end(sizes)) << '\n';
+    dfs(reduced_adjacency,end,start,current_path,paths);
+
+    int64_t max_length = INT64_MIN;
+
+    for(const auto & path : paths) {
+        int64_t length = 0, current = path.front();
+
+        for(int i = 1; i < path.size(); ++i) {
+            length += lengths[current][path[i]];
+            current = path[i];
+        }
+        max_length = std::max(max_length,length);
+    }
+
+    std::cout << max_length << '\n';
 
     return 0;
 }
