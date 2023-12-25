@@ -9,6 +9,11 @@ auto aoc::parser::error(aoc::location const& loc, std::string const& msg) -> voi
     std::cerr << loc << ": " << msg << std::endl;
 }
 
+auto inline heuristic_fn(const aoc::point& v, const aoc::point& goal) -> int64_t
+{
+    return std::abs(v.c - goal.c) + std::abs(v.r - goal.r);
+}
+
 auto part_1(const aoc::context& Context) -> void
 {
 
@@ -17,11 +22,13 @@ auto part_1(const aoc::context& Context) -> void
     std::map<aoc::state,int64_t> costs;
     std::map<aoc::state,aoc::state> previous;
 
-    auto cmp = [&](const auto & left, const auto & right){ return costs[right] < costs[left]; };
-    std::priority_queue<aoc::state, std::vector<aoc::state>, decltype(cmp)> unvisited(cmp);
-
     aoc::point last_point(Context.field.size()-1,Context.field[0].size()-1);
     aoc::state last_state;
+
+    auto cmp = [&](const auto & left, const auto & right){ 
+        return costs[right] + heuristic_fn(right.p,last_point) < costs[left] + heuristic_fn(left.p,last_point); 
+    };
+    std::priority_queue<aoc::state, std::vector<aoc::state>, decltype(cmp)> unvisited(cmp);
 
     // put first possible states in
 
@@ -63,7 +70,9 @@ auto part_1(const aoc::context& Context) -> void
                     aoc::state next{current.p.r,i,aoc::direction::left};
 
                     int64_t new_cost = costs[current] + cost_counter;
-                    if(!costs.contains(next)) costs[next] = INT64_MAX;
+                    if(!costs.contains(next)) {
+                        costs[next] = INT64_MAX;
+                    }
                     if(new_cost < costs[next]) {
                         costs[next] = new_cost;
                         previous[next] = current;
@@ -78,7 +87,9 @@ auto part_1(const aoc::context& Context) -> void
                     aoc::state next{current.p.r,i,aoc::direction::right};
 
                     int64_t new_cost = costs[current] + cost_counter;
-                    if(!costs.contains(next)) costs[next] = INT64_MAX;
+                    if(!costs.contains(next)) {
+                        costs[next] = INT64_MAX;
+                    }
                     if(new_cost < costs[next]) {
                         costs[next] = new_cost;
                         previous[next] = current;
@@ -96,7 +107,9 @@ auto part_1(const aoc::context& Context) -> void
                     aoc::state next{i,current.p.c,aoc::direction::up};
 
                     int64_t new_cost = costs[current] + cost_counter;
-                    if(!costs.contains(next)) costs[next] = INT64_MAX;
+                    if(!costs.contains(next)) {
+                        costs[next] = INT64_MAX;
+                    }
                     if(new_cost < costs[next]) {
                         costs[next] = new_cost;
                         previous[next] = current;
@@ -111,7 +124,9 @@ auto part_1(const aoc::context& Context) -> void
                     aoc::state next{i,current.p.c,aoc::direction::down};
 
                     int64_t new_cost = costs[current] + cost_counter;
-                    if(!costs.contains(next)) costs[next] = INT64_MAX;
+                    if(!costs.contains(next)) {
+                        costs[next] = INT64_MAX;
+                    }
                     if(new_cost < costs[next]) {
                         costs[next] = new_cost;
                         previous[next] = current;
@@ -133,12 +148,14 @@ auto part_2(const aoc::context& Context) -> void
 
     std::map<aoc::state,int64_t> costs;
     std::map<aoc::state,aoc::state> previous;
-
-    auto cmp = [&](const auto & left, const auto & right){ return costs[right] < costs[left]; };
-    std::priority_queue<aoc::state, std::vector<aoc::state>, decltype(cmp)> unvisited(cmp);
-
+    
     aoc::point last_point(Context.field.size()-1,Context.field[0].size()-1);
     aoc::state last_state;
+
+    auto cmp = [&](const auto & left, const auto & right){ 
+        return costs[right] + heuristic_fn(right.p,last_point) < costs[left] + heuristic_fn(left.p,last_point); 
+    };
+    std::priority_queue<aoc::state, std::vector<aoc::state>, decltype(cmp)> unvisited(cmp);
 
     // put first possible states in
 
@@ -175,8 +192,10 @@ auto part_2(const aoc::context& Context) -> void
                     {
                         cost_counter += Context.field[current.p.r][i];
                         aoc::state next{current.p.r,i,aoc::direction::left};
-                        
-                        if(!costs.contains(next)) costs[next] = INT64_MAX;
+
+                        if(!costs.contains(next)) {
+                            costs[next] = INT64_MAX;
+                        }
 
                         skipper++;
 
@@ -199,7 +218,9 @@ auto part_2(const aoc::context& Context) -> void
                         cost_counter += Context.field[current.p.r][i];
                         aoc::state next{current.p.r,i,aoc::direction::right};
                         
-                        if(!costs.contains(next)) costs[next] = INT64_MAX;
+                        if(!costs.contains(next)) {
+                            costs[next] = INT64_MAX;
+                        }
 
                         skipper++;
 
@@ -225,7 +246,9 @@ auto part_2(const aoc::context& Context) -> void
                         cost_counter += Context.field[i][current.p.c];
                         aoc::state next{i,current.p.c,aoc::direction::up};
                         
-                        if(!costs.contains(next)) costs[next] = INT64_MAX;
+                        if(!costs.contains(next)) {
+                            costs[next] = INT64_MAX;
+                        }
 
                         skipper++;
 
@@ -248,7 +271,9 @@ auto part_2(const aoc::context& Context) -> void
                         cost_counter += Context.field[i][current.p.c];
                         aoc::state next{i,current.p.c,aoc::direction::down};
                         
-                        if(!costs.contains(next)) costs[next] = INT64_MAX;
+                        if(!costs.contains(next)) {
+                            costs[next] = INT64_MAX;
+                        }
 
                         skipper++;
 
