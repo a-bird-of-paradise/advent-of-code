@@ -1,0 +1,38 @@
+Day 1
+Traditionally, Day 1 is a very easy task of the "can you read?" variety. Not this year. Totally not enraged with the proliferation of LLMs, Eric put in a very delicate parse and had a deliberately awkward reverse read for part 2. I'm actually impressed that Eric "Chad" Wiestl put in such a brutal LLM and brainlet filter in so early. Much wailing and gnashing of teeth from the twoned. 
+
+Day 2
+Counting coloured cubes. Almost trivilly easy after the horrors of day 1. This was in line with the "can you add?" expectations for day 1. 
+
+Day 3
+Gears. Moderately nasty problem involving determing which symbols are adjacent to which other symbols. I, not being retarded, didn't think it was that bad but there was copious seething as people messed up the parsing. Is "-123" a symbol followed by a number, or just a number? 
+
+Day 4
+Scratchcards. Again very easy if you weren't born with one too many chromosomes. 
+
+Day 5
+Sneeding. Another one where part 1 wasn't very hard but part 2, if done properly, required you to know how to do interval operations which is beyond many. Fortunately for you brainlets this was tractable with brute force. 
+
+Day 6
+Stupid little boat race. Another bell curve problem where you could spend a lot of time debugging an awkward quadratic solution or just brute force it. Brainlets tried being clever for part 2 when you could just strip spaces in the shell before running it. 
+
+Day 7 
+Poker, but retarded. I don't gamble so I had no idea what any of the poker hands were; reading the instructions it was clear that just maxxing the hand was best. I enjoyed the rage from people who didn't read the question and tried doing royal flushes and other things. 
+
+Day 8
+Cycle detection. Huge amounts of seething from people who didn't look at the data and see it was just disjoint cycles. Waaah it wasn't in the description! Not fair! The example for part 2 was LCM you retards. Could actually be brute forced to avoid the filter on reasonable hardware but takes milliseconds otherwise. 
+
+Day 9
+OASIS. I was expecting a merciless Pascal's triangle evaluation but instead it was just take some diffs and extrapolate the ends. Very easy for a weekend problem. 
+
+Day 10
+Remember those screensavers with OpenGL pipes? Well today we did that. The first half of the puzzle was a relativly simple case of stepping around back to the start again and dividing by 2. (You didn't needlessly use Dijkstra, did you, anon?). The clutter in the input file resulted in mamy anons seething with parsing difficulties. Part 2 was even more diffcult for the brainlets taking part this year. Zooming in on the grid was a popular if ignorant approach; those of us with three digit IQs used alternative approaches like colouring one side of the path and flooding or scanning across the pipelines. First actual filter of the year
+
+Day 11
+Eric had read the Wikiepdia article on inflation when he came up with this. The year's Mahattan distance puzzle, only without mentioning it explicitly in the text to irritate anons. 
+
+Day 12
+Springs. Filtered many on part 2 as dynamic programming is some kind of rocket science to many anons. But if you know what you're doing it was just an annoyance. 
+
+Day 13
+This was about reflections. A break after the previous day. 
