@@ -1,8 +1,8 @@
-INCLUDE=-I/usr/local/opt/flex/include/ -I/usr/local/opt/llvm/include -I/usr/local/include/
-LDFLAGS=-L/usr/local/opt/llvm/lib -L/usr/local/opt/llvm/lib/c++ -Wl,-rpath,/usr/local/opt/llvm/lib/c++
+INCLUDE=-IC:/ProgramData/win_flex_bison-2.5.25
+LDFLAGS=
 DBGFLAGS=-fsanitize=address -g -fsanitize=leak 
-FASTFLAGS=-Ofast -flto=full
-CXXFLAGS=$(INCLUDE) $(FASTFLAGS) -std=c++2b
+FASTFLAGS=-O3
+CXXFLAGS=$(INCLUDE) $(FASTFLAGS) -std=c++2b 
 LIBS=
 
 SOURCES=scanner.cpp parser.cpp funcs.cpp main.cpp
@@ -26,6 +26,5 @@ parser.hpp parser.cpp: parser.y
 .PHONY: clean
 
 clean:
-	rm -f scanner.cpp aoc parser.hpp parser.cpp location.hh
-	rm -rf *.dSYM *.gcda *.gcno merge.out default.profraw
+	rm -f scanner.cpp parser.cpp parser.hpp location.hh parser.output aoc
 	rm -f $(OBJS)
