@@ -66,3 +66,4 @@ parser.output
 
 # vscode
 .vscode/
+.vs/
