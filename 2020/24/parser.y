@@ -30,16 +30,48 @@ namespace aoc { class scanner; }
 
 %token E SE SW W NW NE ENDL
 %nterm line lines file
-%nterm move moves
+%type <aoc::move> move moves
 %start file
 
 %%
 
-file:   lines;
+file
+    :   
+    lines
+    {
+        std::cout << Context.flipped.size() << '\n';
+    }
+    ;
+    
 lines:  lines line | line;
-line:   moves ENDL;
-moves:  moves move | move;
-move:   E | SE | SW | W | NW | NE;
+
+line
+    :  
+    moves ENDL  
+    {     
+        if(Context.flipped.contains($1)) {
+            Context.flipped.erase($1);
+        } else {
+            Context.flipped.insert($1);
+        }
+    }
+    ;
+
+moves
+    :  
+    moves move  {   $$ = $1 + $2;   }
+    | move      {   $$ = $1;        }
+    ;
+
+move
+    :   
+    E       {   $$ = aoc::move( 1, 0);    }
+    | SE    {   $$ = aoc::move( 0,-1);    }
+    | SW    {   $$ = aoc::move(-1,-1);    }
+    | W     {   $$ = aoc::move(-1, 0);    }
+    | NW    {   $$ = aoc::move( 0, 1);    }
+    | NE    {   $$ = aoc::move( 1, 1);    }
+    ;
 
 %%
 
