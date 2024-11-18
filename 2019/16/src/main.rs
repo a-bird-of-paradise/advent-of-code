@@ -11,11 +11,45 @@ fn main() {
         .map(|u| u as i32)
         .collect();
     
-    let answer = multiphase(&numbers,100);
+    let answer1 = multiphase(&numbers,100);
 
-    let printme = answer.into_iter().map(|i| i.to_string()).collect::<String>();
+    let printme = answer1.into_iter().map(|i| i.to_string()).collect::<String>();
 
     println!("{}",&printme[..8]);
+
+    let long_numbers = numbers.repeat(10000);
+
+    let long_string : String = long_numbers
+        .clone()
+        .into_iter()
+        .map(|c| c.to_string())
+        .collect();
+
+    let offset = long_string[..7].to_string().parse::<usize>().unwrap();
+
+    let tail : Vec<i32> = long_numbers[offset..].iter().rev().cloned().collect();
+
+    let mut cumsum : Vec<i32> = tail;
+
+    for _i in 1..=100 {
+        cumsum = cumsum
+            .into_iter()
+            .scan(0, |acc , x| {
+                *acc += x;
+                Some(*acc)
+            })
+            .map(|x| x % 10)
+            .collect();
+    }
+
+    let len = cumsum.len();
+
+    let answer : Vec<i32> = cumsum[len-8..].iter().rev().cloned().collect();
+
+    let answer_text = answer.iter().fold(0,|acc,x| acc * 10 + x);
+
+    println!("{answer_text}");
+
 }
 
 fn multiphase(input_signal : &Vec<i32>, n_phase: u32) -> Vec<i32> {
