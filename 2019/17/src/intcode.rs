@@ -202,7 +202,7 @@ impl Machine {
 } 
 
 pub fn do_intcode(
-    numbers : Vec<i64>,
+    numbers : &Vec<i64>,
     input_tape : &Vec<i64>,
     output_tape : &mut Vec<i64>) -> Vec<i64>
 {
