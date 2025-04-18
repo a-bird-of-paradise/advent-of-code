@@ -1,0 +1,11 @@
+aoc
+*.txt
+scanner.cpp
+parser.hpp
+parser.cpp
+# Rust
+debug/
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
