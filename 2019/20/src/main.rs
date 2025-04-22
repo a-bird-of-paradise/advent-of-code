@@ -270,7 +270,7 @@ fn make_graph_and_list(file: &Vec<Vec<char>>) -> (
     let ZZ_target = graph[ZZ_index].iter().nth(0).unwrap().clone();
 
     graph.entry(*AA_index).and_modify(|e| { e.clear(); e.insert(Link::new(AA_target.pt,LinkType::TopLevelOnly)); });
-    graph.entry(*ZZ_index).and_modify(|e| { e.clear(); e.insert(Link::new(AA_target.pt,LinkType::TopLevelOnly)); });
+    graph.entry(*ZZ_index).and_modify(|e| { e.clear(); e.insert(Link::new(ZZ_target.pt,LinkType::TopLevelOnly)); });
 
     
     let mut answer_graph : HashMap<(usize,usize), HashSet<Link>> = HashMap::new();
