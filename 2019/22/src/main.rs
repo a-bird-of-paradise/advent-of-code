@@ -1,122 +1,43 @@
 use std::{env,fs};
+mod part_1;
+mod part_2;
 mod parser;
-use parser::{read_lines, Action, Instruction};
+
+use part_1::do_part_1;
+use part_2::{do_part_1_again,compose_actions};
+use parser::read_lines;
 
 fn main() {
     let file_path : String = env::args().nth(1).expect("No input filename provided.");
     let raw_file = fs::read_to_string(file_path.clone()).expect("Should have been able to read the file");
 
+    println!("Part 1:         {}",do_part_1(&raw_file));
+    println!("Part 1 (again): {}",do_part_1_again(&raw_file));
+
     let action_list = read_lines(&raw_file).unwrap().1;
+    // merci: https://codeforces.com/blog/entry/72593
+    let big_composed_action = compose_actions(&action_list, 119315717514047);
+    let big_power_action = big_composed_action.power(101741582076661);
 
-    // part 1 
-
-    let mut deck = make_factory_deck(10007);
-    apply_actions(&action_list, &mut deck);
-    let answer = deck.iter().position(|&x| x == 2019).unwrap();
-    println!("{answer}");
+    let inv = mod_mul_inverse(big_power_action.a, 119315717514047);
+    let ans =  ( ( (2020 - big_power_action.b) as i128 ) * (inv as i128) ).rem_euclid(119315717514047 as i128);
+    println!("part 2:         {ans}");
 }
 
-fn apply_actions(action_list: &Vec<Action>, deck: &mut Vec<usize>) {
-    for action in action_list {
-        match action.inst {
-            Instruction::DealIntoNewStack => deal_into_new_stack(deck),
-            Instruction::CutNCards => cut_n(deck, action.param),
-            Instruction::DealWithIncrementN => deal_increment_n(deck, action.param)
+fn pow_mod(x: i64, n: i64, m: i64) -> i64 {
+    let mut answer : i64 = 1;
+    let mut n_ = n;
+    let mut x_ = x;
+    while n_ > 0 {
+        if n_ % 2 != 0 {
+            answer = ( (answer as i128 * x_ as i128).rem_euclid(m as i128) ) as i64;
         }
-    }
-}
-
-fn make_factory_deck(n: usize) -> Vec<usize> {
-    let mut answer = vec![0usize; n];
-    for i in 0..n {
-        answer[i] = i;
+        n_ /= 2;
+        x_ = ((x_ as i128 * x_ as i128).rem_euclid(m as i128)) as i64;
     }
     answer
 }
 
-fn deal_into_new_stack(deck: &mut Vec<usize>) {
-    deck.reverse();
-}
-
-fn cut_n(deck: &mut Vec<usize>, n: i64) {
-    if n > 0 {
-        deck.rotate_left(n.try_into().unwrap());
-    } else {
-        deck.rotate_right((-n).try_into().unwrap());
-    }
-}
-
-fn deal_increment_n (deck: &mut Vec<usize>, n : i64) {
-    let len = deck.len();
-    let mut answer = vec![0usize; len];
-    for i in 0..len {
-        answer[(i * n as usize) % len] = deck[i];
-    }
-    *deck = answer;
-}
-
-#[test]
-fn test_cut_n() {
-    let mut deck = make_factory_deck(10);
-    cut_n(&mut deck,3);
-    assert_eq!(deck,vec![3,4,5,6,7,8,9,0,1,2]);
-    deck = make_factory_deck(10);
-    cut_n(&mut deck, -4);
-    assert_eq!(deck,vec![6,7,8,9,0,1,2,3,4,5]);
-}
-
-#[test]
-fn test_deal_into_new_stack() {
-    let mut deck = make_factory_deck(10);
-    deal_into_new_stack(&mut deck);
-    assert_eq!(deck, vec![9,8,7,6,5,4,3,2,1,0]);
-}
-
-#[test]
-fn test_make_factory_deck() {
-    assert_eq!(make_factory_deck(10),vec![0,1,2,3,4,5,6,7,8,9]);
-}
-#[test]
-fn test_deal_increment_n() {
-    let mut deck = make_factory_deck(10);
-    deal_increment_n(&mut deck, 3);
-    assert_eq!(deck, vec![0,7,4,1,8,5,2,9,6,3]);
-}
-
-#[test]
-fn test_apply_actions_1() {
-    let mut deck = make_factory_deck(10);
-    let text = 
-"deal with increment 7
-deal into new stack
-deal into new stack";
-    apply_actions(&read_lines(text).unwrap().1, &mut deck);
-    assert_eq!(deck,vec![0,3,6,9,2,5,8,1,4,7]);
-}
-#[test]
-fn test_apply_actions_3() {
-    let mut deck = make_factory_deck(10);
-    let text = 
-"deal with increment 7
-deal with increment 9
-cut -2";
-    apply_actions(&read_lines(text).unwrap().1, &mut deck);
-    assert_eq!(deck,vec![6,3,0,7,4,1,8,5,2,9]);
-}
-#[test]
-fn test_apply_actions_4() {
-    let mut deck = make_factory_deck(10);
-    let text = 
-"deal into new stack
-cut -2
-deal with increment 7
-cut 8
-cut -4
-deal with increment 7
-cut 3
-deal with increment 9
-deal with increment 3
-cut -1";
-    apply_actions(&read_lines(text).unwrap().1, &mut deck);
-    assert_eq!(deck,vec![9,2,5,8,1,4,7,0,3,6]);
+fn mod_mul_inverse(x: i64, m: i64) -> i64 {
+    pow_mod(x, m-2, m)
 }
