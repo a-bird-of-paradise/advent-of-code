@@ -1,0 +1,10 @@
+[package]
+name = "aoc2024"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+current_dir = "0.1.2"
+nom = "8.0.0"
+num = "0.4.3"
+structopt = "0.3.26"
