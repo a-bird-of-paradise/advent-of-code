@@ -1,5 +1,4 @@
 use aoc2024::AOC;
-use std::fs;
 use num::abs;
 use std::collections::BTreeMap;
 pub struct Day01 {}
@@ -61,6 +60,7 @@ impl AOC for Day01 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;    
 
     #[test]
     fn parser() {
