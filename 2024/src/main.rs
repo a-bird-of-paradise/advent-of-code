@@ -27,6 +27,7 @@ fn day_to_problem(day: usize) -> Option<Box<dyn AOC>> {
     match day {
         1 => Some(Box::new(days::day01::Day01{})),
         2 => Some(Box::new(days::day02::Day02{})),
+        3 => Some(Box::new(days::day03::Day03{})),
         _ => None
     }
 }

@@ -1,4 +1,5 @@
 use aoc2024::AOC;
+use aoc2024::skip_nth;
 pub struct Day02 {}
 
 use nom::{
@@ -33,14 +34,6 @@ fn try_drops(row: &[i64]) -> bool {
         }
     }
     false
-}
-
-fn skip_nth(vec: &[i64], n: usize) -> Vec<i64> {
-    vec
-        .iter()
-        .enumerate()
-        .filter_map(|(i, el)| (i != n).then_some(*el))
-        .collect()
 }
 
 fn safe_row(row: &[i64]) -> bool {
