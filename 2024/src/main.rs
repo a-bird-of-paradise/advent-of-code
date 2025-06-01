@@ -8,26 +8,54 @@ use structopt::StructOpt;
 #[structopt(name = "Advent of Code 2024", about = "Driver for AoC 2024 solutions")]
 struct Opt {
     #[structopt(short,long)]
-    day: usize,
+    day: Option<usize>,
     
     #[structopt(parse(from_os_str))]
-    input: Option<PathBuf>
+    input: Option<PathBuf>,
+
+    #[structopt(short,long,conflicts_with("day"))]
+    all: bool
 }
 
 fn default_file_name(day: usize) -> PathBuf {
     PathBuf::from(format!("inputs/day{:02}.txt", day))
 }
 
+fn run_day_inner(day:usize, input: &str) -> (String,String) {
+    (
+        day_to_problem(day).unwrap().part_one(input),
+        day_to_problem(day).unwrap().part_two(input)
+    )
+}
+
+fn run_day(day:usize, file_name: &PathBuf) -> (String,String) {
+    let input = fs::read_to_string(file_name).unwrap();
+    run_day_inner(day, &input)
+}
+
 fn main() {
     let opt = Opt::from_args();
-    let problem = day_to_problem(opt.day).unwrap();
 
-    let file_name = if opt.input.is_none() { default_file_name(opt.day) } else { opt.input.unwrap() };
+    // do one day
 
-    let file = fs::read_to_string(file_name).unwrap();
+    if opt.day.is_some() {
+        let day = opt.day.unwrap();
+        let file_name = if opt.input.is_none() { default_file_name(day) } else { opt.input.unwrap() };
 
-    println!("Part 1: {}", problem.part_one(&file));
-    println!("Part 2: {}", problem.part_two(&file));
+        let (part1,part2) = run_day(day, &file_name);
+        println!("Part 1: {part1}");
+        println!("Part 2: {part2}");
+    }
+
+    if opt.all {
+
+        for i in 1..=5 {
+            let (part1,part2) = run_day(i,&default_file_name(i));
+            println!("Day {i:02}, Part 1:  {part1}");
+            println!("Day {i:02}, Part 2:  {part2}");
+        }
+
+    }
 }
 
 fn day_to_problem(day: usize) -> Option<Box<dyn AOC>> {

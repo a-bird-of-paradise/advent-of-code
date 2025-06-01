@@ -120,6 +120,7 @@ impl AOC for Day05 {
     }
 }
 
+#[allow(dead_code)]
 fn part_two_slow(input: &str) -> String {
 
     let (pre_rules,lists) = read_input(input).unwrap().1;
