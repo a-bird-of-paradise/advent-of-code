@@ -21,25 +21,25 @@ pub struct Point {
     pub y: i64
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
-pub struct PointOffset {
+pub struct Direction {
     pub x: i64,
     pub y: i64
 }
 
 impl Point          { pub const fn new() -> Self { Self { x: 0, y: 0 } } }
-impl PointOffset    { pub const fn new() -> Self { Self { x: 0, y: 0 } } }
+impl Direction      { pub const fn new() -> Self { Self { x: 0, y: 0 } } }
 
-impl Add for PointOffset {
-    type Output = PointOffset;
-    fn add(self, other: PointOffset) -> PointOffset {
-        PointOffset {
+impl Add for Direction {
+    type Output = Direction;
+    fn add(self, other: Direction) -> Direction {
+        Direction {
             x: self.x + other.x,
             y: self.y + other.y,
         }
     }
 }
 
-impl Add<Point> for PointOffset {
+impl Add<Point> for Direction {
     type Output = Point;
     fn add(self, other: Point) -> Point {
         Point {
@@ -49,9 +49,9 @@ impl Add<Point> for PointOffset {
     }
 }
 
-impl Add<PointOffset> for Point {
+impl Add<Direction> for Point {
     type Output = Point;
-    fn add(self, other: PointOffset) -> Point {
+    fn add(self, other: Direction) -> Point {
         Point {
             x: self.x + other.x,
             y: self.y + other.y,
@@ -59,7 +59,7 @@ impl Add<PointOffset> for Point {
     }
 }
 
-impl AddAssign for PointOffset {
+impl AddAssign for Direction {
     fn add_assign(&mut self, other: Self) {
         *self = Self {
             x: self.x + other.x,
@@ -68,8 +68,8 @@ impl AddAssign for PointOffset {
     }
 }
 
-impl AddAssign<PointOffset> for Point {
-    fn add_assign(&mut self, other: PointOffset) {
+impl AddAssign<Direction> for Point {
+    fn add_assign(&mut self, other: Direction) {
         *self = Self {
             x: self.x + other.x,
             y: self.y + other.y,
@@ -77,15 +77,15 @@ impl AddAssign<PointOffset> for Point {
     }
 }
 
-impl<T> Mul<T> for PointOffset where T:Into<i64> {
-    type Output = PointOffset;
+impl<T> Mul<T> for Direction where T:Into<i64> {
+    type Output = Direction;
     fn mul(self, rhs: T) -> Self {
         let rhsi = rhs.into();
         Self { x: self.x * rhsi, y: self.y * rhsi }
     }
 }
 
-impl PointOffset { 
+impl Direction { 
     pub fn is_cardinal(&self) -> bool {
         self.x == 0 || self.y == 0
     }

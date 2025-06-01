@@ -1,4 +1,4 @@
-use aoc2024::{AOC,Point,PointOffset};
+use aoc2024::{AOC,Point,Direction};
 pub struct Day04 {}
 
 use std::collections::{BTreeMap,BTreeSet};
@@ -7,7 +7,7 @@ fn make_index(input: &str) -> BTreeMap<char, BTreeSet<Point>> {
     let mut answer: BTreeMap<char,BTreeSet<Point>> = BTreeMap::new();
 
     let mut point: Point = Point { x : 0, y : 0 };
-    let po_next: PointOffset = PointOffset { x: 1, y: 0 };
+    let po_next: Direction = Direction { x: 1, y: 0 };
 
     for c in input.chars() {
         if c == '\r' {
@@ -28,13 +28,13 @@ fn make_index(input: &str) -> BTreeMap<char, BTreeSet<Point>> {
     answer
 }
 
-fn get_directions() -> BTreeSet<PointOffset> {
-    let mut directions : BTreeSet<PointOffset> = BTreeSet::new();
+fn get_directions() -> BTreeSet<Direction> {
+    let mut directions : BTreeSet<Direction> = BTreeSet::new();
     
     for dx in -1..=1 {
         for dy in -1..=1 {
             if dx == 0 && dy == 0 { continue; }
-            directions.insert(PointOffset { x: dx, y: dy });
+            directions.insert(Direction { x: dx, y: dy });
         }
     }
     directions
@@ -55,10 +55,10 @@ fn count_xmas(index: &BTreeMap<char,BTreeSet<Point>>) -> usize {
     answer
 }
 
-fn loc_mas(index: &BTreeMap<char,BTreeSet<Point>>) -> BTreeMap<Point,BTreeSet<PointOffset>> {
+fn loc_mas(index: &BTreeMap<char,BTreeSet<Point>>) -> BTreeMap<Point,BTreeSet<Direction>> {
     // returns a map, key = location of A in MAS and value = set of direction vectors 
     // but only allows for intercardinal dirs
-    let mut answer: BTreeMap<Point,BTreeSet<PointOffset>> = BTreeMap::new();
+    let mut answer: BTreeMap<Point,BTreeSet<Direction>> = BTreeMap::new();
     let directions = get_directions();
 
     for m in &index[&'M'] {
@@ -73,7 +73,7 @@ fn loc_mas(index: &BTreeMap<char,BTreeSet<Point>>) -> BTreeMap<Point,BTreeSet<Po
     answer
 }
 
-fn count_intercardinal_pairs(mas: &BTreeMap<Point,BTreeSet<PointOffset>>) -> usize {
+fn count_intercardinal_pairs(mas: &BTreeMap<Point,BTreeSet<Direction>>) -> usize {
     let mut answer = 0;
     for (_, v)  in mas {
         if v.len() == 2 {
