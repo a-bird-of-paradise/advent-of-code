@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 current_dir = "0.1.2"
+itertools = "0.14.0"
 nom = "8.0.0"
 num = "0.4.3"
 structopt = "0.3.26"
