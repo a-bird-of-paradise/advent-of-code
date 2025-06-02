@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use aoc2024::AOC;
 use aoc2024::{Point,Direction};
-use itertools::Itertools;
+
 pub struct Day06 {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
