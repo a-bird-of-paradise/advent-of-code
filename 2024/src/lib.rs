@@ -1,4 +1,4 @@
-use std::ops::{Add,AddAssign,Mul};
+use std::ops::{Add,AddAssign,Mul,Sub,SubAssign,MulAssign};
 use num::abs;
 
 pub trait AOC {
@@ -39,6 +39,16 @@ impl Add for Direction {
     }
 }
 
+impl Sub for Direction {
+    type Output = Direction;
+    fn sub(self, other: Direction) -> Direction {
+        Direction {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
 impl Add<Point> for Direction {
     type Output = Point;
     fn add(self, other: Point) -> Point {
@@ -49,12 +59,32 @@ impl Add<Point> for Direction {
     }
 }
 
+impl Sub<Point> for Direction {
+    type Output = Point;
+    fn sub(self, other: Point) -> Point {
+        Point {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
 impl Add<Direction> for Point {
     type Output = Point;
     fn add(self, other: Direction) -> Point {
         Point {
             x: self.x + other.x,
             y: self.y + other.y,
+        }
+    }
+}
+
+impl Sub<Direction> for Point {
+    type Output = Point;
+    fn sub(self, other: Direction) -> Point {
+        Point {
+            x: self.x - other.x,
+            y: self.y - other.y,
         }
     }
 }
@@ -77,11 +107,44 @@ impl AddAssign<Direction> for Point {
     }
 }
 
+impl SubAssign for Direction {
+    fn sub_assign(&mut self, other: Self) {
+        *self = Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        };
+    }
+}
+
+impl SubAssign<Direction> for Point {
+    fn sub_assign(&mut self, other: Direction) {
+        *self = Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        };
+    }
+}
+
 impl<T> Mul<T> for Direction where T:Into<i64> {
     type Output = Direction;
     fn mul(self, rhs: T) -> Self {
         let rhsi = rhs.into();
         Self { x: self.x * rhsi, y: self.y * rhsi }
+    }
+}
+
+impl<T> MulAssign<T> for Direction where T:Into<i64> {
+    fn mul_assign(&mut self, rhs: T) {
+        let rhsi = rhs.into();
+        self.x *= rhsi;
+        self.y *= rhsi;
+    }
+}
+
+impl Sub for Point { // x + y meaningless but x - y is a distance vector 
+    type Output = Direction;
+    fn sub(self, rhs: Point) -> Direction {
+        Direction { x: self.x - rhs.x, y: self.y - rhs.y }
     }
 }
 
