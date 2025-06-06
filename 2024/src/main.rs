@@ -49,7 +49,7 @@ fn main() {
 
     if opt.all {
 
-        for i in 1..=9 {
+        for i in 1..=10 {
             let (part1,part2) = run_day(i,&default_file_name(i));
             println!("Day {i:02}, Part 1:  {part1}");
             println!("Day {i:02}, Part 2:  {part2}");
@@ -69,6 +69,7 @@ fn day_to_problem(day: usize) -> Option<Box<dyn AOC>> {
         7 => Some(Box::new(days::day07::Day07{})),
         8 => Some(Box::new(days::day08::Day08{})),
         9 => Some(Box::new(days::day09::Day09{})),
+        10=> Some(Box::new(days::day10::Day10{})),
         _ => None
     }
 }
