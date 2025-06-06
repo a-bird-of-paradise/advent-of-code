@@ -95,6 +95,7 @@ impl AOC for Day09 {
     fn part_two(&self, input: &str) -> String {  
         
         let mut disk = read_input(input);
+        let mut first_blank_index = 0usize;
 
         let mut first_block_pointer: BTreeMap<i64,usize> = Default::default();
         let mut block_length: BTreeMap<i64,usize> = Default::default();
@@ -117,7 +118,11 @@ impl AOC for Day09 {
 
         while current_to_move > 0 {
             //println!("!{current_to_move}");
-            let mut pointer: usize = 0;
+            let mut pointer: usize = first_blank_index;
+
+            while let Block::Number(_) = disk[pointer] { pointer+=1; }
+            first_blank_index = pointer;
+
             let needed_length = block_length[&current_to_move];
             let ubound = first_block_pointer[&current_to_move];
 
