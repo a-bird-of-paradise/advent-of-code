@@ -1,5 +1,5 @@
 use aoc2024::{AOC,Point};
-use std::collections::{BTreeMap, HashSet};
+use std::collections::HashSet;
 pub struct Day10 {}
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Default, Hash)]
