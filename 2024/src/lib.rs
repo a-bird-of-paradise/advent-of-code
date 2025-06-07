@@ -1,4 +1,4 @@
-use std::ops::{Add,AddAssign,Mul,Sub,SubAssign,MulAssign};
+use std::{fmt::Debug, ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign}};
 use num::abs;
 
 pub trait AOC {
@@ -154,5 +154,78 @@ impl Direction {
     }
     pub fn is_intercardinal(&self) -> bool {
         abs(self.x) == abs(self.y)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum TreeNode<T> {
+    Leaf(T),
+    Children(Vec<TreeNode<T>>)
+}
+
+impl<T> TreeNode<T> where T: Clone{
+    pub fn new_leaf(from: &T) -> Self {
+        Self::Leaf(from.clone())
+    }
+
+    pub fn new_leaves(from: &Vec<T>) -> Self {
+        Self::Children(
+            from
+                .iter()
+                .map(|t| Self::new_leaf(&t))
+                .collect()
+        )
+    }
+}
+
+impl<T> TreeNode<T> {
+    pub fn num_leaves(&self) -> u64 {
+        match self {
+            TreeNode::Leaf(_) => { 1 },
+            TreeNode::Children(v) => { v.iter().map(|c| c.num_leaves()).sum() }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Tree<T> {
+    pub root: Option<TreeNode<T>>
+}
+
+impl<T> Tree<T> where T:Clone {
+    pub fn new(from: &Vec<T>) -> Self {
+        Self { root: Some(TreeNode::new_leaves(from)) }
+    }
+}
+
+impl<T> Tree<T> {
+    pub fn num_leaves(&self) -> u64 {
+        match &self.root {
+            None => { 0 },
+            Some(t) => { t.num_leaves() }
+        }
+    }
+}
+
+impl TreeNode<u64> {
+    pub fn walk(&mut self) {
+        // if I have children, walk them
+        match self {
+            TreeNode::Children(v) => { 
+                for c in v { c.walk(); }
+            },
+            TreeNode::Leaf(v) => {
+                if *v == 0 {
+                    *v = 1;
+                } else if (v.checked_ilog10().unwrap_or(0)+1) % 2 == 0 {
+                    let n_digits = v.checked_ilog10().unwrap_or(0)+1;
+                    let divisor = 10_u64.pow(n_digits / 2);
+                    let split = vec![*v / divisor, *v % divisor];
+                    *self = TreeNode::new_leaves(&split);
+                } else {
+                    *v *= 2024;
+                }
+            }
+        }
     }
 }
