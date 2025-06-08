@@ -1,5 +1,3 @@
-use std::fs::read_to_string;
-
 use aoc2024::{AOC, Point, Direction};
 use nom::{bytes::complete::tag, character::{anychar, complete::{i64, line_ending, space0}}, combinator::opt, multi::many1, sequence::separated_pair, IResult, Parser};
 pub struct Day14;
