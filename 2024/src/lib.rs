@@ -152,8 +152,24 @@ impl Direction {
     pub fn is_cardinal(&self) -> bool {
         self.x == 0 || self.y == 0
     }
+
     pub fn is_intercardinal(&self) -> bool {
         abs(self.x) == abs(self.y)
+    }
+
+    pub fn rot_right(&self) -> Self {
+        Self { x: -self.y, y: self.x }
+    }
+}
+
+impl Point {
+    pub fn cardinal_neighbours(&self) -> Vec<Self> {
+        vec![
+            *self + Direction{ x:  0, y:  1 },
+            *self + Direction{ x:  1, y:  0 },
+            *self + Direction{ x:  0, y: -1 },
+            *self + Direction{ x: -1, y:  0 }
+        ]
     }
 }
 
