@@ -317,7 +317,6 @@ impl AOC for Day15 {
                         let mut points_to_check = HashSet::<Point>::new(); 
                         let mut can_move = true;
 
-                        points_to_move.insert(prev);
                         points_to_move.insert(current);
 
                         if next == Block::BoxLeft {
@@ -329,6 +328,8 @@ impl AOC for Day15 {
                         for point in &points_to_move {
                             points_to_check.insert(*point + dir);
                         }
+                        
+                        points_to_move.insert(prev);
 
                         while can_move & !points_to_check.is_empty() {
                             let check_point = *points_to_check.iter().next().unwrap();
