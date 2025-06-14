@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+cached = "0.55.1"
 current_dir = "0.1.2"
 itertools = "0.14.0"
 nom = "8.0.0"

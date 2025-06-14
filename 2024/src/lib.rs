@@ -1,4 +1,4 @@
-use std::{fmt::Debug, ops::{Add, AddAssign, Mul, MulAssign, Sub, SubAssign}};
+use std::{fmt::Debug, ops::{Add, AddAssign, Mul, MulAssign, Neg, Sub, SubAssign}};
 use num::abs;
 
 pub trait AOC {
@@ -145,6 +145,14 @@ impl Sub for Point { // x + y meaningless but x - y is a distance vector
     type Output = Direction;
     fn sub(self, rhs: Point) -> Direction {
         Direction { x: self.x - rhs.x, y: self.y - rhs.y }
+    }
+}
+
+impl Neg for Direction {
+    type Output = Direction;
+
+    fn neg(self) -> Self::Output {
+        Self { x: -self.x, y: -self.y }
     }
 }
 
