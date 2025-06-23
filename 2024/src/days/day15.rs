@@ -1,6 +1,6 @@
-use std::{collections::{HashMap, HashSet}, ops::{Deref, DerefMut}};
+use std::{collections::{HashMap, HashSet}};
 
-use aoc2024::{AOC, Point, Direction};
+use aoc2024::{AOC, Point, Direction, Grid};
 use nom::{character::complete::{line_ending, one_of}, combinator::opt, multi::{fold, many1}, sequence::terminated, IResult, Parser};
 
 pub struct Day15;
@@ -11,77 +11,6 @@ enum Move { Up, Down, Left, Right }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 enum Block { Wall, Robot, Empty, Box, BoxLeft, BoxRight }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-struct Grid<T> {
-    pub cells: Vec<T>,
-    pub width: usize,
-    pub height: usize
-}
-
-impl<T> Grid<T> {
-    pub fn get(&self, x: usize, y: usize) -> &T {
-        &self.cells[x + y * self.width]
-    }
-
-    pub fn set(&mut self, x: usize, y: usize) -> &mut T {
-        &mut self.cells[x + y * self.width]
-    }
-
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
-        self.cells.iter()
-    }
-
-    pub fn index_to_point(&self, index: usize) -> Point {
-        Point { x: index.rem_euclid(self.width as usize) as i64, y: index.div_euclid(self.width as usize) as i64 }
-    }
-
-    pub fn point_to_index(&self, point: &Point) -> usize {
-        (point.y as usize * self.width) + point.x as usize
-    }
-}
-
-impl<T> IntoIterator for Grid<T> {
-    type Item = T;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.cells.into_iter()
-    }
-}
-
-impl<T> Deref for Grid<T> {
-    type Target = [T]; 
-    fn deref(&self) -> &[T] {
-        &self.cells[..]
-    }
-}
-
-impl<T> DerefMut for Grid<T> {
-    fn deref_mut(&mut self) -> &mut [T] {
-        &mut self.cells[..]
-    }
-}
-
-impl<T> From<Vec<Vec<T>>> for Grid<T> where T:Clone {
-    fn from(item: Vec<Vec<T>>) -> Self {
-        let height = item.len();
-        let width = item[0].len();
-        let inner = item.iter().flatten().cloned().collect();
-        Self { cells: inner, width: width, height: height }
-    }
-}
-
-impl<T> std::fmt::Display for Grid<T> where T: std::fmt::Display {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        for y in 0..self.height {
-            for x in 0..self.width {
-                write!(f,"{}",self.get(x, y))?;
-            }
-            write!(f,"\n")?;
-        }
-        Ok(())
-    }
-}
 
 impl std::fmt::Display for Block {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
