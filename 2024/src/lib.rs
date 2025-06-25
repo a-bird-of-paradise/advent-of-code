@@ -281,6 +281,10 @@ impl<T> Grid<T> {
     pub fn point_to_index(&self, point: &Point) -> usize {
         (point.y as usize * self.width) + point.x as usize
     }
+
+    pub fn contains(&self, point: &Point) -> bool {
+        point.x >= 0 && point.x < self.width.try_into().unwrap() && point.y >= 0 && point.y < self.height.try_into().unwrap()
+    }
 }
 
 impl<T> IntoIterator for Grid<T> {
